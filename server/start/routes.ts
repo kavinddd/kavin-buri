@@ -8,5 +8,11 @@
 */
 
 import router from '@adonisjs/core/services/router'
-router.on('/').renderInertia('home')
 
+// SSR
+router.on('/').renderInertia('HomePage')
+router.on('/contact').renderInertia('ContactPage')
+router.on('/about').renderInertia('AboutPage')
+router.on('/booking').renderInertia('BookingPage')
+
+// API
