@@ -26,7 +26,10 @@ export function DateRangePicker({
       <PopoverTrigger asChild>
         <Button
           variant={'outline'}
-          className={cn('justify-start text-left font-normal', !value && 'text-muted-foreground')}
+          className={cn(
+            'w-full justify-start text-left font-normal',
+            !value && 'text-muted-foreground'
+          )}
         >
           {!value && placeholder}
           {showFrom && !showTo && value?.from && format(value.from, 'PPP')}
@@ -34,7 +37,7 @@ export function DateRangePicker({
           <CalendarIcon className="mr-2 h-4 w-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 border-secondary border-2 bg-zinc-200">
+      <PopoverContent className=" p-0 border-secondary border-2 bg-zinc-200">
         <Calendar mode="range" selected={value} onSelect={onChange} initialFocus />
       </PopoverContent>
     </Popover>
