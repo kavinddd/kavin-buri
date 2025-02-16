@@ -1,10 +1,10 @@
 import { Head } from '@inertiajs/react'
 import { MainLayout } from '~/components/MainLayout'
 
-export default function ContactPage() {
+export default function AboutPage() {
   return (
     <>
-      <Head title="Contact" />
+      <Head title="Home" />
       <MainLayout>
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
@@ -14,9 +14,6 @@ export default function ContactPage() {
           sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
           est laborum
         </p>
-        <p>Contact page</p>
-        <p>ภาษาไทย</p>
-        <p>ພາສາລາວ</p>
       </MainLayout>
     </>
   )
