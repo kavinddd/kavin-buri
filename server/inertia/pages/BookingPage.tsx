@@ -1,12 +1,15 @@
-import { Head } from '@inertiajs/react'
+import { Head, useForm } from '@inertiajs/react'
 import { MainLayout } from '~/components/MainLayout'
 
-export default function Home() {
+export default function BookingPage() {
+  const { data, setData } = useForm()
+
+  console.log(data)
   return (
     <>
       <Head title="Home" />
       <MainLayout>
-        <p className="text-sand-500">Booking Page</p>
+        <form></form>
       </MainLayout>
     </>
   )

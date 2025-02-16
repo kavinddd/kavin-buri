@@ -1,39 +1,63 @@
 import { Link, usePage } from '@inertiajs/react'
 import { ReactNode } from 'react'
+import { Button } from '~/lib/components/ui/button'
+import WideLogo from './WideLogo'
+import { SidebarTrigger } from '~/lib/components/ui/sidebar'
+import { navs } from '~/core/navconfig'
 
 export default function Header() {
   return (
-    <div className="flex sm:pl-2 md:pl-20 pr-10 justify-between shadow-md">
-      <Link href={'/'}>
-        <Logo />
-      </Link>
-      <Navbar />
+    <div className="flex px-4 md:px-20 justify-between shadow-md items-center ">
+      <div className="h-14 sm:h-20">
+        <Link href={'/'}>
+          <WideLogo />
+        </Link>
+      </div>
+
+      <div className="hidden md:block">
+        <Navbar />
+      </div>
+
+      <div className="hidden md:block">
+        <ButtonLink href={'/booking'}>Book</ButtonLink>
+      </div>
+      <div className="block md:hidden">
+        <SidebarTrigger />
+      </div>
     </div>
   )
-}
-
-function Logo() {
-  return <img src={'/images/logo.jpg'} alt="logo" className={'h-20 md:h-30 md:w-fit'} />
 }
 
 function Navbar() {
   const { url } = usePage()
 
-  console.log(url)
   return (
     <>
-      <nav className="flex justify-evenly flex-grow ">
-        <NavLink href={'/about'} isActive={url === '/about'}>
-          About
-        </NavLink>
-        <NavLink href={'/contact'} isActive={url === '/contact'}>
-          Contact
-        </NavLink>
-        <NavLink href={'/booking'} isActive={url === '/booking'}>
-          <button className="bg-orange-300 px-2 py-2 rounded-md">Book Now</button>
-        </NavLink>
+      <nav>
+        <ul className="flex justify-center gap-10 lg:gap-28 items-center">
+          {navs
+            .filter((nav) => nav.url !== '/booking')
+            .map((nav) => (
+              <li key={nav.url}>
+                <NavLink href={nav.url} isActive={url === nav.url}>
+                  {nav.label}
+                </NavLink>
+              </li>
+            ))}
+          <li></li>
+        </ul>
       </nav>
     </>
+  )
+}
+
+function ButtonLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <Link className={'flex items-center tracking-wide uppercase text-sm '} href={href}>
+      <Button className="shadow-md hover:opacity-80 uppercase font-medium tracking-wide">
+        {children}
+      </Button>
+    </Link>
   )
 }
 
@@ -46,11 +70,11 @@ function NavLink({
   children: ReactNode
   isActive: boolean
 }) {
-  const activeClassName = isActive ? 'font-bold' : ''
+  const activeClassName = isActive ? 'underline' : ''
 
   return (
     <Link
-      className={'xl uppercase hover:text-red-600 flex items-center ' + activeClassName}
+      className={'flex items-center tracking-wider uppercase text-sm ' + activeClassName}
       href={href}
     >
       {children}

@@ -6,7 +6,9 @@ export default function ContactPage() {
     <>
       <Head title="Contact" />
       <MainLayout>
-        <p> contact page</p>
+        <p>Contact page</p>
+        <p>ภาษาไทย</p>
+        <p>ພາສາລາວ</p>
       </MainLayout>
     </>
   )
