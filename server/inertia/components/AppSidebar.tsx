@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react'
 import { navs } from '~/core/navconfig'
+import { Separator } from '~/lib/components/ui/separator'
 import { Sidebar, SidebarContent } from '~/lib/components/ui/sidebar'
 
 export default function AppSidebar() {
@@ -10,8 +11,9 @@ export default function AppSidebar() {
       <SidebarContent className="p-4">
         <ul className="flex flex-col gap-4">
           {navs.map((nav) => (
-            <li key={nav.url}>
+            <li key={nav.url} className="py-1">
               <Link href={nav.url}>{nav.label}</Link>
+              <Separator />
             </li>
           ))}
         </ul>
