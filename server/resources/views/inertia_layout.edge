@@ -7,12 +7,15 @@
 
   <title inertia>Kavin Buri</title>
 
+  <link rel="icon" href="{{ asset('images/favicon.jpg') }}" type="image/x-icon">
+
   @viteReactRefresh()
   @inertiaHead()
   @vite(['inertia/app/app.tsx', `inertia/pages/${page.component}.tsx`])
 </head>
 
-<body class="min-h-screen w-screen font-sans">
+
+<body >
   @inertia()
 </body>
 
