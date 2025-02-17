@@ -8,6 +8,39 @@ export default {
   ],
   theme: {
   	extend: {
+  		animation: {
+  			'fade-in-up': 'fade-in-up 1s ease-in-out',
+  			'accordion-down': 'accordion-down 0.2s ease-out',
+  			'accordion-up': 'accordion-up 0.2s ease-out'
+  		},
+  		keyframes: {
+  			'fade-in-up': {
+  				'0%': {
+  					opacity: 0,
+  					transform: 'translate3d(0, 100%, 0)'
+  				},
+  				'100%': {
+  					opacity: 1,
+  					transform: 'translate3d(0, 0, 0)'
+  				}
+  			},
+  			'accordion-down': {
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-accordion-content-height)'
+  				}
+  			},
+  			'accordion-up': {
+  				from: {
+  					height: 'var(--radix-accordion-content-height)'
+  				},
+  				to: {
+  					height: '0'
+  				}
+  			}
+  		},
   		fontFamily: {
   			inter: [
   				'Inter',
