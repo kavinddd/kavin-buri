@@ -17,7 +17,7 @@ export function MainLayout({ children, backgroundSrc }: Props) {
         <Header />
 
         <div className="relative flex-grow">
-          <main className="relative container mx-auto px-4 sx:px-10 py-2 sm:py-6 z-50 h-full">
+          <main className="relative container mx-auto px-4 sx:px-10 py-2 sm:py-6 z-20 h-full">
             {children}
           </main>
           {backgroundSrc && (
