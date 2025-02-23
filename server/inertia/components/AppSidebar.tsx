@@ -12,7 +12,7 @@ export default function AppSidebar() {
         <ul className="flex flex-col gap-4">
           {navs.map((nav) => (
             <li key={nav.url} className="py-1">
-              <Link href={nav.url}>{nav.label}</Link>
+              <Link href={nav.url}>&nbsp;{nav.label}</Link>
               <Separator />
             </li>
           ))}

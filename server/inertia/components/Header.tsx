@@ -34,7 +34,7 @@ function Navbar() {
   return (
     <>
       <nav>
-        <ul className="flex justify-center gap-10 lg:gap-28 items-center">
+        <ul className="flex justify-center gap-10 lg:gap-28 items-center ">
           {navs
             .filter((nav) => nav.url !== '/booking')
             .map((nav) => (
@@ -44,7 +44,6 @@ function Navbar() {
                 </NavLink>
               </li>
             ))}
-          <li></li>
         </ul>
       </nav>
     </>
@@ -74,7 +73,9 @@ function NavLink({
 
   return (
     <Link
-      className={'flex items-center tracking-wider uppercase text-sm ' + activeClassName}
+      className={
+        'flex items-center tracking-wider uppercase text-sm text-inherit ' + activeClassName
+      }
       href={href}
     >
       {children}
