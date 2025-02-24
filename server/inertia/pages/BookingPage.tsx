@@ -9,6 +9,7 @@ import BookingAccordions from '~/features/booking/BookingAccordions'
 import HotelCarousel, { RoomType } from '~/features/booking/HotelCarousel'
 import RoomCarousel from '~/features/booking/RoomCarousel'
 import RoomPriceCalendar from '~/features/booking/RoomPriceCalendar'
+import RoomPriceCalendarDialog from '~/features/booking/RoomPriceCalendarDialog'
 import { Button } from '~/lib/components/ui/button'
 import { Calendar } from '~/lib/components/ui/calendar'
 import {
@@ -23,6 +24,7 @@ import { Input } from '~/lib/components/ui/input'
 import { Separator } from '~/lib/components/ui/separator'
 
 export default function BookingPage() {
+  const [dateRange, setDateRange] = useState<DateRange>()
   return (
     <>
       <Head title="Book a room" />
@@ -31,7 +33,6 @@ export default function BookingPage() {
           Online Booking
         </p>
         <BookingForm />
-        <RoomPriceCalendar />
         <Separator className="hidden md:block md:w-2/3 self-center mt-4" />
         <section className="my-2">
           <p className="text-center md:text-left text-primary text-lg uppercase tracking-widest">
@@ -99,37 +100,37 @@ function BookingForm() {
           </CardDescription>
         </CardHeader>
         <CardContent className="w-full">
-          <div className="flex flex-col md:flex-row">
+          <div className="flex flex-col lg:flex-row">
             <div className="flex-1">
               <div className="flex flex-col gap-2">
                 <Input type="text" disabled={true} readOnly={true} value={data.roomType} />
                 <RoomCarousel onSelect={(roomType) => setData('roomType', roomType)} />
 
                 <div className="flex flex-col xl:flex-row gap-2 xl:gap-4 items-center">
-                  <DateRangePicker
+                  <RoomPriceCalendarDialog
                     placeholder="Check-In"
                     showTo={false}
                     showFrom={true}
                     value={dateRange}
-                    onChange={setDateRange}
+                    onSubmit={setDateRange}
                   />
                   <span className="hidden xl:inline text-muted-foreground"> to </span>
-                  <DateRangePicker
+                  <RoomPriceCalendarDialog
                     placeholder="Check-Out"
                     showTo={true}
                     showFrom={false}
                     value={dateRange}
-                    onChange={setDateRange}
+                    onSubmit={setDateRange}
                   />
                 </div>
               </div>
             </div>
             <div className="flex mx-4 p-1 py-3">
-              <Separator className="hidden md:block" orientation="vertical" />
-              <Separator className="md:hidden" orientation="horizontal" />
+              <Separator className="hidden lg:block" orientation="vertical" />
+              <Separator className="lg:hidden" orientation="horizontal" />
             </div>
-            <div className="flex flex-1 max-w-xl flex-col justify-between">
-              <p className="hidden md:block text-center text-primary text-lg mb-2 lg:mb-6">
+            <div className="flex flex-1 lg:max-w-md flex-col justify-between">
+              <p className="hidden lg:block text-center text-primary text-lg mb-2 lg:mb-6">
                 Booking Detail
               </p>
               <div className="flex flex-col gap-2 lg:gap-6 flex-1">
@@ -176,6 +177,18 @@ function BookingForm() {
                   <span className="absolute right-4 top-1/2 text-sm transform -translate-y-1/2 text-muted-foreground ">
                     Children
                   </span>
+                </div>
+
+                <div className="flex flex-col md:flex-row md:gap-6 text-muted-foreground text-sm md:text-md">
+                  <div className="flex items-center gap-2">
+                    <Label>Include Breakfast</Label>
+                    <Input className="w-5 md:w-6 block" type="checkbox" />
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Label>Pickup at Udon Thani Airport</Label>
+                    <Input className="w-5 md:w-6 block" type="checkbox" />
+                  </div>
                 </div>
               </div>
               <Button
