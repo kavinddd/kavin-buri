@@ -11,12 +11,12 @@ interface AccordionDataType {
 }
 const accordions: AccordionDataType[] = [
   {
-    header: 'Are dog cute?',
-    content: 'Yes',
+    header: 'What is the check-in time?',
+    content: '14:00 GMT+7',
   },
   {
-    header: 'Are cats cute?',
-    content: 'Yes',
+    header: 'Can I refund?',
+    content: "Unfortunately, you can't",
   },
 ]
 

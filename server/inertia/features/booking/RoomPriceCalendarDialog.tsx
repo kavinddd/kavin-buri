@@ -5,15 +5,12 @@ import {
   DialogContent,
   DialogDescription,
   DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { DateRange, SelectRangeEventHandler } from 'react-day-picker'
+import { DateRange } from 'react-day-picker'
 import { cn } from '~/lib/lib/utils'
-import { differenceInDays, format } from 'date-fns'
+import { differenceInDays, format, isEqual } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import RoomPriceCalendar from './RoomPriceCalendar'
 import { useState } from 'react'
@@ -39,8 +36,18 @@ export default function RoomPriceCalendarDialog({
     onSubmit(internalValue)
   }
 
+  function handleSelect(day: DateRange | undefined) {
+    console.log(day?.to === day?.from)
+    if (day?.to && day?.from && isEqual(day.to, day.from)) return
+    setInternalValue(day)
+  }
+
   const checkInDateString = internalValue?.from?.toLocaleDateString('th') || 'Select check-in date'
   const checkOutDateString = internalValue?.to?.toLocaleDateString('th') || 'Select check-out date'
+  const diffNightsString =
+    internalValue?.from && internalValue?.to
+      ? `(${differenceInDays(internalValue.to, internalValue.from)} nights)`
+      : ''
 
   return (
     <Dialog>
@@ -66,11 +73,11 @@ export default function RoomPriceCalendarDialog({
         <RoomPriceCalendar
           mode="range"
           selected={internalValue}
-          onSelect={setInternalValue}
+          onSelect={handleSelect}
           initialFocus
         />
         <DialogFooter className="flex-row justify-between md:justify-between w-full px-2">
-          <p className="hidden md:block flex-1 text-green-800">{`${checkInDateString} - ${checkOutDateString}`}</p>
+          <p className="hidden md:block flex-1 text-green-800">{`${checkInDateString} - ${checkOutDateString} ${diffNightsString}`}</p>
           <div className="w-full md:w-auto flex justify-between gap-2">
             <DialogClose asChild>
               <Button variant="ghost" size="sm">

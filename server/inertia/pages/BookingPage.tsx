@@ -1,30 +1,18 @@
 import { Head, useForm } from '@inertiajs/react'
 import { Label } from '@radix-ui/react-label'
-import { CircleArrowRightIcon, CircleChevronRightIcon, CircleChevronUpIcon } from 'lucide-react'
+import { CircleChevronRightIcon } from 'lucide-react'
 import { useState } from 'react'
 import { DateRange } from 'react-day-picker'
-import { DateRangePicker } from '~/components/DateRangePicker'
 import { MainLayout } from '~/components/MainLayout'
 import BookingAccordions from '~/features/booking/BookingAccordions'
-import HotelCarousel, { RoomType } from '~/features/booking/HotelCarousel'
-import RoomCarousel from '~/features/booking/RoomCarousel'
-import RoomPriceCalendar from '~/features/booking/RoomPriceCalendar'
+import RoomCarousel, { RoomType } from '~/features/booking/RoomCarousel'
 import RoomPriceCalendarDialog from '~/features/booking/RoomPriceCalendarDialog'
 import { Button } from '~/lib/components/ui/button'
-import { Calendar } from '~/lib/components/ui/calendar'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '~/lib/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader } from '~/lib/components/ui/card'
 import { Input } from '~/lib/components/ui/input'
 import { Separator } from '~/lib/components/ui/separator'
 
 export default function BookingPage() {
-  const [dateRange, setDateRange] = useState<DateRange>()
   return (
     <>
       <Head title="Book a room" />
@@ -89,8 +77,6 @@ function BookingForm() {
   //TODO: add confirm modal
   //
 
-  console.log(errors)
-
   return (
     <Card className="mx-auto w-full md:p-4 lg:p-6 max-w-[1200px]">
       <form onSubmit={handleSubmit}>
@@ -141,6 +127,7 @@ function BookingForm() {
                   onChange={(e) => setData('firstName', e.target.value)}
                   required
                 />
+                {errors.firstName && <p>{errors.firstName}</p>}
                 <Input
                   type="text"
                   placeholder="Last Name"
@@ -148,6 +135,7 @@ function BookingForm() {
                   onChange={(e) => setData('lastName', e.target.value)}
                   required
                 />
+                {errors.lastName && <p>{errors.lastName}</p>}
                 <div className="relative">
                   <Input
                     type="number"
@@ -162,7 +150,9 @@ function BookingForm() {
                   <span className="absolute right-4 top-1/2 text-sm transform -translate-y-1/2 text-muted-foreground ">
                     Adults
                   </span>
+                  {errors.numAdult && <p>{errors.numAdult}</p>}
                 </div>
+
                 <div className="relative">
                   <Input
                     type="number"
@@ -177,6 +167,7 @@ function BookingForm() {
                   <span className="absolute right-4 top-1/2 text-sm transform -translate-y-1/2 text-muted-foreground ">
                     Children
                   </span>
+                  {errors.numChildren && <p>{errors.numChildren}</p>}
                 </div>
 
                 <div className="flex flex-col md:flex-row md:gap-6 text-muted-foreground text-sm md:text-md">

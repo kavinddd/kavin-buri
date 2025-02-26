@@ -1,9 +1,8 @@
-import { DateRange, DayContentProps, DayProps, isDateRange } from 'react-day-picker'
+import { DayContentProps, isDateRange } from 'react-day-picker'
 import { formatNumber } from '~/lib/utils/formatNumber'
 import { Calendar, CalendarProps } from '~/lib/components/ui/calendar'
-import { useState } from 'react'
 import { cn } from '~/lib/lib/utils'
-import { differenceInDays, isAfter, isBefore, isEqual } from 'date-fns'
+import { isAfter, isBefore, isEqual, isPast, isToday } from 'date-fns'
 
 type Year = number
 type Month = number
@@ -114,12 +113,13 @@ const tempData: PriceCalendar = {
   },
 }
 
+function getRoomPriceByDate(date: Date) {
+  return tempData[date.getFullYear()]?.[date.getMonth() + 1]?.[date.getDate()]
+}
+
 function RoomPriceDay(props: DayContentProps & Pick<CalendarProps, 'selected'>) {
   const { date, selected } = props
-  const year = date.getFullYear()
-  const month = date.getMonth()
-  const day = date.getDate()
-  const roomPrice = tempData[year]?.[month + 1]?.[day]
+  const roomPrice = getRoomPriceByDate(date)
 
   let isSelected = false
   let isLastSelected = false
@@ -155,15 +155,8 @@ function RoomPriceDay(props: DayContentProps & Pick<CalendarProps, 'selected'>) 
   )
 }
 
-function isDisabled() {
-  // TODO: disable no rate, less than today
-  return false
-}
-
 export default function RoomPriceCalendar(props: CalendarProps) {
   const { selected } = props
-
-  const today = new Date()
 
   return (
     <Calendar
@@ -182,7 +175,13 @@ export default function RoomPriceCalendar(props: CalendarProps) {
       }}
       components={{
         // Day: RoomPriceDay,
-        DayContent: (props) => <RoomPriceDay {...props} selected={selected} today={today} />,
+        DayContent: (props) => <RoomPriceDay {...props} selected={selected} />,
+      }}
+      disabled={(day) => {
+        if (isPast(day) && !isToday(day)) return true
+        if (!getRoomPriceByDate(day)) return true
+        // if (isDateRange(selected) && selected?.from && isEqual(selected.from, day)) return true
+        return false
       }}
       {...props}
     />
