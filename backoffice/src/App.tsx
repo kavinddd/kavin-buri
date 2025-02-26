@@ -1,17 +1,31 @@
-import { useState } from "react";
 import "./App.css";
+import { Route, Routes } from "react-router";
+import DashboardPage from "./features/dashboard/DashboardPage";
+import LoginPage from "./features/login/LoginPage";
+import MainLayout from "./components/layouts/MainLayout";
+import WithUser from "./components/layouts/WithUser";
+import UserProvider from "./features/user/UserProvider";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <p className="text-red-600">Hello World</p>
+    <UserProvider>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/"
+          element={
+            <WithUser>
+              <MainLayout />
+            </WithUser>
+          }
+        >
+          <Route index element={<DashboardPage />} />
+        </Route>
+      </Routes>
 
-      <p>current count: {count}</p>
-
-      <button onClick={() => setCount((c) => c + 1)}>+</button>
-    </>
+      <Toaster />
+    </UserProvider>
   );
 }
 
