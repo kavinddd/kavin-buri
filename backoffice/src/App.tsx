@@ -6,6 +6,7 @@ import MainLayout from "./components/layouts/MainLayout";
 import WithUser from "./components/layouts/WithUser";
 import UserProvider from "./features/user/UserProvider";
 import { Toaster } from "./components/ui/sonner";
+import BookingPage from "./features/booking/BookingPage";
 import NotFoundPage from "./components/errors/NotFoundPage";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           }
         >
           <Route index element={<DashboardPage />} />
+          <Route path="booking" element={<BookingPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
