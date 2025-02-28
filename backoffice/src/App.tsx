@@ -6,6 +6,7 @@ import MainLayout from "./components/layouts/MainLayout";
 import WithUser from "./components/layouts/WithUser";
 import UserProvider from "./features/user/UserProvider";
 import { Toaster } from "./components/ui/sonner";
+import NotFoundPage from "./components/errors/NotFoundPage";
 
 function App() {
   return (
@@ -22,8 +23,9 @@ function App() {
         >
           <Route index element={<DashboardPage />} />
         </Route>
-      </Routes>
 
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
       <Toaster />
     </UserProvider>
   );
