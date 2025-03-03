@@ -44,7 +44,7 @@ export default function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <p className="text-center tracking-wide">
-              {state === "collapsed" ? "K" : "Kavin Buri"}
+              {state === "collapsed" ? "K" : "Kavin Buri BO"}
             </p>
           </SidebarMenuItem>
         </SidebarMenu>
