@@ -1,3 +1,4 @@
+import DataTable from "@/components/DataTable";
 import {
   Table,
   TableBody,
@@ -12,6 +13,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+
 type BookingType = {
   firstName: string;
   lastName: string;
@@ -57,7 +59,7 @@ const columns: ColumnDef<BookingType>[] = [
   },
   {
     accessorKey: "telNum",
-    header: "Telephone No.",
+    header: "Tel No.",
   },
 
   {
@@ -67,7 +69,7 @@ const columns: ColumnDef<BookingType>[] = [
 
   {
     accessorKey: "hasBreakfast",
-    header: "BF",
+    header: "ABF",
   },
 
   {
@@ -85,55 +87,5 @@ const columns: ColumnDef<BookingType>[] = [
 ];
 
 export default function BookingPage() {
-  const table = useReactTable({
-    data: bookings,
-    columns: columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-  return (
-    <div>
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  );
+  return <DataTable data={bookings} columns={columns} />;
 }
