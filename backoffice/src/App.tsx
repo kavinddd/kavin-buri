@@ -8,6 +8,7 @@ import UserProvider from "./features/user/UserProvider";
 import { Toaster } from "./components/ui/sonner";
 import BookingPage from "./features/booking/BookingPage";
 import NotFoundPage from "./components/errors/NotFoundPage";
+import RoomPage from "./features/rooms/RoomPage";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         >
           <Route index element={<DashboardPage />} />
           <Route path="booking" element={<BookingPage />} />
+          <Route path="room" element={<RoomPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
