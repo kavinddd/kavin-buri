@@ -1,36 +1,40 @@
+import { BookingsService } from '#services/bookings_service'
+import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 import { randomUUID, UUID } from 'node:crypto'
 
-type BookingId = UUID
-type RoomId = string
-
-type BookingStatus = 'UNPAID' | 'PAID'
-
-interface Booking {
-  id: BookingId
-  roomId: RoomId
-  status: BookingStatus
-  firstName: string
-  lastName: string
-}
-
-const bookings: Booking[] = []
-
+@inject()
 export default class BookingsController {
+  constructor(public service: BookingsService) {}
+
+  //region inertia
+  //
   async list() {
-    return bookings
+    return
   }
   async store({ request, response, inertia }: HttpContext) {
-    const newBooking: Booking = {
-      id: randomUUID(),
-      roomId: randomUUID(),
-      firstName: request.input('firstName'),
-      lastName: request.input('lastName'),
-      status: 'UNPAID',
-    }
-
-    bookings.push(newBooking)
-
     return inertia.render('BookingPage')
   }
+
+  //endregion
+
+  //region api
+
+  async paginate({ request }: HttpContext) {
+    return []
+  }
+
+  async create(ctx: HttpContext) {
+    return 11
+  }
+
+  async update(ctx: HttpContext) {
+    return 11
+  }
+
+  async delete(ctx: HttpContext) {
+    return 11
+  }
+
+  //endregion
 }

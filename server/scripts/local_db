@@ -1,0 +1,1 @@
+docker run --name kavinburi-postgres -e POSTGRES_PASSWORD=lucid -e POSTGRES_USER=lucid -e POSTGRES_DB=kavinburi -v /home/kav:/var/lib/postgresql/data -p 5432:5432 -d postgres

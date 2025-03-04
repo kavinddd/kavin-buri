@@ -1,0 +1,1 @@
+docker run -p 80:80 -e PGADMIN_DEFAULT_EMAIL=admin@kavinburi.com -e PGADMIN_DEFAULT_PASSWORD=admin -d dpage/pgadmin4

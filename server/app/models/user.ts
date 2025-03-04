@@ -1,11 +1,14 @@
 import { DateTime } from 'luxon'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, column, hasManyThrough, manyToMany } from '@adonisjs/lucid/orm'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
+import type { HasManyThrough, ManyToMany } from '@adonisjs/lucid/types/relations'
+import RoleGroup from '#models/role_group'
+import Role from '#models/role'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
-  uids: ['email'],
+  uids: ['username'],
   passwordColumnName: 'password',
 })
 
@@ -17,7 +20,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare fullName: string | null
 
   @column()
-  declare email: string
+  declare username: string
 
   @column({ serializeAs: null })
   declare password: string
@@ -27,4 +30,12 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+
+  @manyToMany(() => RoleGroup, {
+    pivotTable: 'user_role_group',
+  })
+  declare roleGroups: ManyToMany<typeof RoleGroup>
+
+  @hasManyThrough([() => Role, () => RoleGroup])
+  declare roles: HasManyThrough<typeof Role>
 }

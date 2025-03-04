@@ -1,21 +1,16 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'users'
+  protected tableName = 'role_groups'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id').notNullable()
-
-      table.string('full_name').nullable()
-
-      table.string('username', 254).notNullable().unique()
-      table.string('password').notNullable()
-
-      table.boolean('is_active').notNullable().defaultTo(false)
-
+      table.increments('id')
+      table.string('name').notNullable().unique()
       table.timestamp('created_at').notNullable()
+      table.integer('created_by').unsigned().references('id').inTable('users')
       table.timestamp('updated_at').notNullable()
+      table.integer('updated_by').unsigned().references('id').inTable('users')
     })
   }
 
