@@ -11,6 +11,8 @@ const BookingsController = () => import('#controllers/bookings_controller')
 const SessionController = () => import('#controllers/session_controller')
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
+import { HealthChecks } from '@adonisjs/core/health'
+import HealthChecksController from '#controllers/health_checks_controller'
 
 // inertia
 router.on('/').renderInertia('HomePage')
@@ -28,6 +30,7 @@ router
   .group(() => {
     router.post('/sessions/login', [SessionController, 'store']).as('sessions.store')
     // router.get('/sessions/test', [SessionController, 'test']).as('sessions.test')
+    router.get('/health', [HealthChecksController]).as('health')
 
     router
       .group(() => {
@@ -46,6 +49,7 @@ router
         router
       })
       .use(middleware.auth())
+    router.get('/*', ({ response }) => response.badRequest()).as('badRequest')
   })
   .prefix('/api')
   .as('api')
