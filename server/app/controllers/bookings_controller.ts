@@ -1,7 +1,7 @@
+import BookingPolicy from '#policies/booking_policy'
 import { BookingsService } from '#services/bookings_service'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
-import { randomUUID, UUID } from 'node:crypto'
 
 @inject()
 export default class BookingsController {
@@ -20,7 +20,11 @@ export default class BookingsController {
 
   //region api
 
-  async paginate({ request }: HttpContext) {
+  async paginate({ request, bouncer, response }: HttpContext) {
+    const test = bouncer.with(BookingPolicy)
+    if (await bouncer.with(BookingPolicy).denies('list')) {
+      return response.forbidden('No access')
+    }
     return []
   }
 

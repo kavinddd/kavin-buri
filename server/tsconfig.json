@@ -3,8 +3,9 @@
   "compilerOptions": {
     "rootDir": "./",
     "outDir": "./build",
+    "jsx": "preserve",
     "paths": {
-      "@/*": ["./inertia/lib/*"]
+      "@/*": ["./inertia/lib/*"],
     },
   },
   "exclude": ["./inertia/**/*", "node_modules", "build"]

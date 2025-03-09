@@ -7,12 +7,12 @@
 |
 */
 
-const BookingsController = () => import('#controllers/bookings_controller')
-const SessionController = () => import('#controllers/session_controller')
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
-import { HealthChecks } from '@adonisjs/core/health'
-import HealthChecksController from '#controllers/health_checks_controller'
+
+const BookingsController = () => import('#controllers/bookings_controller')
+const SessionController = () => import('#controllers/session_controller')
+const HealthChecksController = () => import('#controllers/health_checks_controller')
 
 // inertia
 router.on('/').renderInertia('HomePage')
@@ -28,12 +28,30 @@ router.get('/bookings', [BookingsController, 'list']).as('bookings.list')
 
 router
   .group(() => {
-    router.post('/sessions/login', [SessionController, 'store']).as('sessions.store')
-    // router.get('/sessions/test', [SessionController, 'test']).as('sessions.test')
+    // public
+    router.get('/testNoAuth', ({ response }) => response.ok('OK')).as('testNoAuth')
     router.get('/health', [HealthChecksController]).as('health')
 
     router
       .group(() => {
+        router.post('/login', [SessionController, 'store']).as('sessions.store')
+      })
+      .prefix('/sessions')
+      .as('sessions')
+
+    // auth
+    router
+      .group(() => {
+        router.get('/testAuth', ({ response }) => response.ok('OK')).as('testAuth')
+
+        // sessions
+        router
+          .group(() => {
+            router.get('/', [SessionController, 'get']).as('sessions.get')
+          })
+          .prefix('/sessions')
+          .as('sessions')
+
         // booking
         router
           .group(() => {
@@ -46,12 +64,13 @@ router
           .as('bookings')
 
         // room
-        router
       })
-      .use(middleware.auth())
+      .use([middleware.auth()])
+
     router.get('/*', ({ response }) => response.badRequest()).as('badRequest')
   })
   .prefix('/api')
   .as('api')
+  .use([middleware.logger()])
 
 router.on('/*').renderInertia('errors/not_found')
