@@ -9,6 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
+import RoleGroupsController from '#controllers/role_groups_controller'
 
 const BookingsController = () => import('#controllers/bookings_controller')
 const SessionController = () => import('#controllers/session_controller')
@@ -34,7 +35,7 @@ router
 
     router
       .group(() => {
-        router.post('/login', [SessionController, 'store']).as('sessions.store')
+        router.post('/login', [SessionController, 'store']).as('login')
       })
       .prefix('/sessions')
       .as('sessions')
@@ -47,12 +48,24 @@ router
         // sessions
         router
           .group(() => {
-            router.get('/', [SessionController, 'get']).as('sessions.get')
+            router.get('/', [SessionController, 'get']).as('me')
           })
           .prefix('/sessions')
           .as('sessions')
 
-        // booking
+        // roleGroups
+        router
+          .group(() => {
+            router.get('/', [RoleGroupsController, 'paginate']).as('paginate')
+            router.get('/:id', [RoleGroupsController, 'get']).as('get')
+            router.post('/', [RoleGroupsController, 'create']).as('create')
+            router.patch('/:id', [RoleGroupsController, 'update']).as('update')
+            router.delete('/:id', [RoleGroupsController, 'delete']).as('delete')
+          })
+          .prefix('/roleGroups')
+          .as('roleGroups')
+
+        // bookings
         router
           .group(() => {
             router.get('/', [BookingsController, 'paginate']).as('paginate')
@@ -64,7 +77,7 @@ router
           .prefix('/bookings')
           .as('bookings')
 
-        // room
+        // rooms
       })
       .use([middleware.auth(), middleware.logger()])
 
