@@ -14,7 +14,7 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 
 export default class User extends compose(BaseModel, AuthFinder) {
   @column({ isPrimary: true })
-  declare id: number
+  declare id: UserId
 
   @column()
   declare fullName: string | null
@@ -36,6 +36,8 @@ export default class User extends compose(BaseModel, AuthFinder) {
   })
   declare roleGroups: ManyToMany<typeof RoleGroup>
 
-  @hasManyThrough([() => Role, () => RoleGroup])
-  declare roles: HasManyThrough<typeof Role>
+  // @hasManyThrough([() => Role, () => RoleGroup])
+  // declare roles: HasManyThrough<typeof Role>
 }
+
+export type UserId = number

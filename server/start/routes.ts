@@ -56,8 +56,9 @@ router
         router
           .group(() => {
             router.get('/', [BookingsController, 'paginate']).as('paginate')
+            router.get('/:id', [BookingsController, 'get']).as('get')
             router.post('/', [BookingsController, 'create']).as('create')
-            router.put('/:id', [BookingsController, 'update']).as('update')
+            router.patch('/:id', [BookingsController, 'update']).as('update')
             router.delete('/:id', [BookingsController, 'delete']).as('delete')
           })
           .prefix('/bookings')
@@ -65,12 +66,11 @@ router
 
         // room
       })
-      .use([middleware.auth()])
+      .use([middleware.auth(), middleware.logger()])
 
     router.get('/*', ({ response }) => response.badRequest()).as('badRequest')
   })
   .prefix('/api')
   .as('api')
-  .use([middleware.logger()])
 
 router.on('/*').renderInertia('errors/not_found')

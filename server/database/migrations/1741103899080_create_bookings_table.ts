@@ -19,6 +19,10 @@ export default class extends BaseSchema {
       table.date('check_out_date').notNullable()
       table.boolean('has_abf').defaultTo(false) // ABF included?
       table.boolean('has_transportation').defaultTo(false) // Transportation included?
+      table
+        .enu('source', ['WALK-IN', 'PHONE', 'WEBSITE', 'OTHERS'])
+        .notNullable()
+        .defaultTo('OTHERS')
     })
   }
 

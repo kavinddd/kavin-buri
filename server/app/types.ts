@@ -15,4 +15,4 @@ export type ReservationType = 'NON-GUARANTEED' | 'DEPOSIT-RECEIVED' | 'GUARANTEE
 
 export type BookingStatusType = 'RESERVED' | 'CHECKED-IN' | 'CHECKED-OUT' | 'NO-SHOW' | 'CANCELLED'
 
-export type BookingSource = 'WALK-IN' | 'PHONE' | 'WEBSITE' | 'OTHERS'
+export type BookingSourceType = 'WALK-IN' | 'PHONE' | 'WEBSITE' | 'OTHERS'

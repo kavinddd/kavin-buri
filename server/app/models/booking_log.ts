@@ -4,17 +4,17 @@ import Booking from '#models/booking'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Room from '#models/room'
 import type { BookingStatusType } from '../types.js'
-import User from '#models/user'
+import User, { type UserId } from '#models/user'
 
 export default class BookingLog extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number
+  declare id: BookingLog
 
-  @belongsTo(() => Booking)
-  declare bookingId: BelongsTo<typeof Booking>
+  @column()
+  declare bookingId: number
 
-  @belongsTo(() => Room)
-  declare roomId: BelongsTo<typeof Room>
+  @column()
+  declare roomId: number
 
   @column()
   declare status: BookingStatusType
@@ -22,9 +22,20 @@ export default class BookingLog extends BaseModel {
   @column()
   declare remark: string
 
+  @column()
+  declare createdBy: UserId
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
+  @belongsTo(() => Room)
+  declare room: BelongsTo<typeof Room>
+
+  @belongsTo(() => Booking)
+  declare booking: BelongsTo<typeof Booking>
+
   @belongsTo(() => User)
-  declare createdBy: BelongsTo<typeof User>
+  declare createdByUser: BelongsTo<typeof User>
 }
+
+export type BookingLogId = number
