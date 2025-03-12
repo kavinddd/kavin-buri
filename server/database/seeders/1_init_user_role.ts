@@ -39,6 +39,14 @@ export default class extends BaseSeeder {
             name: 'EDIT_ROLE_GROUP',
             description: 'Able to create/edit role groups',
           },
+          {
+            name: 'READ_GUEST',
+            description: 'Able to read guests',
+          },
+          {
+            name: 'EDIT_GUEST',
+            description: 'Able to create/edit guests',
+          },
         ],
         { client: trx }
       )

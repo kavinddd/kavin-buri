@@ -8,13 +8,15 @@ export default class extends BaseSchema {
       table.increments('id')
 
       table.string('citizen_id').notNullable().unique()
-      table.string('title').notNullable()
       table.string('first_name').notNullable()
       table.string('last_name').notNullable()
       table.string('nationality').notNullable()
       table.date('date_of_birth').notNullable()
 
-      table.integer('booking_log_id').references('id').inTable('booking_logs')
+      table.timestamp('created_at').notNullable()
+      table.integer('created_by').unsigned().references('id').inTable('users')
+      table.timestamp('updated_at').notNullable()
+      table.integer('updated_by').unsigned().references('id').inTable('users')
     })
   }
 

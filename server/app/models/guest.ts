@@ -1,9 +1,12 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, dateColumn } from '@adonisjs/lucid/orm'
+import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { ModelAttributes } from '@adonisjs/lucid/types/model'
+import { PaginateReq } from '../paginate.js'
+import type { UserId } from './user.js'
 
 export default class Guest extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number
+  declare id: GuestId
 
   @column()
   declare citizenId: string
@@ -25,4 +28,18 @@ export default class Guest extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @column()
+  declare updatedBy: UserId
+
+  @column()
+  declare createdBy: UserId
 }
+
+export type GuestId = number
+
+export type GuestType = ModelAttributes<InstanceType<typeof Guest>>
+export type GuestSort = Extract<keyof GuestType, 'nationality' | 'dateOfBirth' | 'updatedAt'>
+export const guestSortEnum: GuestSort[] = ['nationality', 'dateOfBirth', 'updatedAt']
+export type GuestSearch = Partial<GuestType>
+export type GuestPaginateReq = PaginateReq<GuestSearch, GuestSort>

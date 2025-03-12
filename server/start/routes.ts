@@ -11,6 +11,7 @@ import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 import RoleGroupsController from '#controllers/role_groups_controller'
 import RoomsController from '#controllers/rooms_controller'
+import GuestsController from '#controllers/guests_controller'
 
 const BookingsController = () => import('#controllers/bookings_controller')
 const SessionController = () => import('#controllers/session_controller')
@@ -89,6 +90,18 @@ router
           })
           .prefix('/rooms')
           .as('rooms')
+
+        // rooms
+        router
+          .group(() => {
+            router.get('/', [GuestsController, 'paginate']).as('paginate')
+            router.get('/:id', [GuestsController, 'get']).as('get')
+            router.post('/', [GuestsController, 'create']).as('create')
+            router.patch('/:id', [GuestsController, 'update']).as('update')
+            router.delete('/:id', [GuestsController, 'delete']).as('delete')
+          })
+          .prefix('/guests')
+          .as('guests')
       })
       .use([middleware.auth(), middleware.logger()])
 
