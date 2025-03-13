@@ -9,10 +9,11 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
-import RoleGroupsController from '#controllers/role_groups_controller'
-import RoomsController from '#controllers/rooms_controller'
-import GuestsController from '#controllers/guests_controller'
+import UsersController from '#controllers/users_controller'
 
+const RoleGroupsController = () => import('#controllers/role_groups_controller')
+const RoomsController = () => import('#controllers/rooms_controller')
+const GuestsController = () => import('#controllers/guests_controller')
 const BookingsController = () => import('#controllers/bookings_controller')
 const SessionController = () => import('#controllers/session_controller')
 const HealthChecksController = () => import('#controllers/health_checks_controller')
@@ -102,6 +103,18 @@ router
           })
           .prefix('/guests')
           .as('guests')
+
+        // users
+        router
+          .group(() => {
+            router.get('/', [UsersController, 'paginate']).as('paginate')
+            router.get('/:id', [UsersController, 'get']).as('get')
+            router.post('/', [UsersController, 'create']).as('create')
+            router.patch('/:id', [UsersController, 'update']).as('update')
+            router.delete('/:id', [UsersController, 'delete']).as('delete')
+          })
+          .prefix('/users')
+          .as('users')
       })
       .use([middleware.auth(), middleware.logger()])
 

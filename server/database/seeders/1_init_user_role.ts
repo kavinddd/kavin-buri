@@ -47,6 +47,14 @@ export default class extends BaseSeeder {
             name: 'EDIT_GUEST',
             description: 'Able to create/edit guests',
           },
+          {
+            name: 'READ_USER',
+            description: 'Able to read users',
+          },
+          {
+            name: 'EDIT_USER',
+            description: 'Able to create/edit users',
+          },
         ],
         { client: trx }
       )

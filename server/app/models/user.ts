@@ -6,6 +6,8 @@ import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import type { HasManyThrough, ManyToMany } from '@adonisjs/lucid/types/relations'
 import RoleGroup from '#models/role_group'
 import Role from '#models/role'
+import { ModelAttributes } from '@adonisjs/lucid/types/model'
+import { PaginateReq } from '../paginate.js'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['username'],
@@ -31,6 +33,12 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 
+  @column()
+  declare createdBy: UserId
+
+  @column()
+  declare updatedBy: UserId
+
   @manyToMany(() => RoleGroup, {
     pivotTable: 'user_role_group',
   })
@@ -41,3 +49,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
 }
 
 export type UserId = number
+
+export type UserType = ModelAttributes<User>
+export type UserSort = Extract<keyof UserType, 'id' | 'fullName' | 'username' | 'updatedAt'>
+export const userSortEnum: UserSort[] = ['id', 'fullName', 'username']
+export type UserSearch = Partial<UserType>
+export type UserPaginateReq = PaginateReq<UserSearch, UserSort>
