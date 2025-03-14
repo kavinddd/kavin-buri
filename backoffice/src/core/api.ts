@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3333"; // FIXME:
+const API_URL = "http://localhost:3333/api"; // FIXME:
 
 const defaultOptions: RequestInit = {
   headers: {
@@ -19,9 +19,13 @@ export async function fetchJson<ResponseType>(
         }).toString();
 
   try {
-    const response = await fetch(`${API_URL}/${path}?${params})}`, {
-      ...defaultOptions,
+    const url = `${API_URL}/${path}`;
+    const finalUrl = params ? url + `?${params}` : url;
+    const response = await fetch(finalUrl, {
       ...options,
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     if (!response.ok) {

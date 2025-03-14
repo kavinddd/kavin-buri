@@ -1,7 +1,8 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
 type Role = string;
-interface User {
+
+export interface User {
   name: string;
   roles: Role[];
 }

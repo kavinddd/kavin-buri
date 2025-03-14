@@ -4,12 +4,11 @@ import User from '#models/user'
 import { inject } from '@adonisjs/core'
 import { Logger } from '@adonisjs/core/logger'
 import { ModelObject } from '@adonisjs/lucid/types/model'
+import Role from '#models/role'
 
 interface SessionInfo {
   user: User
-}
-interface SessionResponse {
-  user: User
+  roles: Role[]
 }
 
 @inject()
@@ -17,10 +16,15 @@ export default class SessionController {
   constructor(public logger: Logger) {}
 
   async get({ auth }: HttpContext): Promise<SessionInfo> {
-    return { user: auth.getUserOrFail() }
+    const user = auth.getUserOrFail()
+    await user.loadOnce('roleGroups')
+    await Promise.all(user.roleGroups.map(async (roleGroup) => await roleGroup.loadOnce('roles')))
+    const roles = user.roleGroups.flatMap((rg) => rg.roles)
+
+    return { user: user, roles: roles }
   }
 
-  async store({ request, auth }: HttpContext): Promise<SessionResponse> {
+  async store({ request, auth }: HttpContext): Promise<SessionInfo> {
     /**
      * Step 1: Get credentials from the request body
      */
@@ -32,6 +36,10 @@ export default class SessionController {
 
     const user = await User.verifyCredentials(username, password)
 
+    await user.loadOnce('roleGroups')
+    await Promise.all(user.roleGroups.map(async (roleGroup) => await roleGroup.load('roles')))
+    const roles = user.roleGroups.flatMap((rg) => rg.roles)
+
     /**
      * Step 3: Login user (use web guard)
      */
@@ -40,7 +48,8 @@ export default class SessionController {
     this.logger.info(`${user.username} is logged-in successfully`)
 
     return {
-      user,
+      user: user,
+      roles: roles,
     }
   }
 }
