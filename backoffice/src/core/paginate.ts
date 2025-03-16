@@ -8,7 +8,7 @@ export interface PaginateReq<Sort extends string> {
   page: number;
   size: number;
   sort: Sort;
-  ascending?: boolean;
+  direction?: "asc" | "desc";
 }
 
 export function toQueryParams<Sort extends string>(
@@ -18,6 +18,6 @@ export function toQueryParams<Sort extends string>(
     page: paginateReq.page.toString(),
     pageSize: paginateReq.size.toString(),
     sort: paginateReq.sort,
-    ascending: paginateReq.ascending?.toString() || "true",
+    direction: paginateReq.direction || "asc",
   }).toString();
 }

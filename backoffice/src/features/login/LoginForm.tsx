@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
-import { User, useUser } from "../user/UserProvider";
+import { useUser } from "../user/UserProvider";
 import { sessionApis } from "./apis";
-import { SessionInfo } from "./types";
+import { AuthUser, SessionInfo } from "./types";
 
 const formSchema = z.object({
   username: z.string().min(5, "Username must be at least 6 characters."),
@@ -25,6 +25,15 @@ const formSchema = z.object({
 });
 
 // type FormSchemaType = z.infer<typeof formSchema>;
+//
+export function transformSessionInfoToAuthUser(
+  sessionInfo: SessionInfo,
+): AuthUser {
+  return {
+    username: sessionInfo.user.username,
+    roles: sessionInfo.roles,
+  };
+}
 
 export default function LoginForm({
   className,
@@ -51,10 +60,7 @@ export default function LoginForm({
         password,
       })
       .then((sessionInfo: SessionInfo) => {
-        const user: User = {
-          user: sessionInfo.user,
-          roles: sessionInfo.roles,
-        };
+        const user = transformSessionInfoToAuthUser(sessionInfo);
         setUser(user);
         toast("Login Successfully");
         navigate("/");

@@ -1,31 +1,21 @@
-import { fetchJson } from "@/core/api";
+import { fetchJson, fetchVoid } from "@/core/api";
+import { LoginReq, SessionInfo } from "./types";
 
-type UserId = number;
-interface User {
-  id: UserId;
-  fullName: string;
-  username: string;
-  createdAt: string;
-  createdBy?: UserId;
-  updatedAt: string;
-  updatedBy?: UserId;
-}
-
-interface LoginReq {
-  username: string;
-  password: string;
-}
+const sessionEndpoint = "sessions";
 
 export const sessionApis = {
-  login: async function (req: LoginReq): Promise<User> {
-    return await fetchJson<User>("sessions/login", {
+  login: async function (req: LoginReq): Promise<SessionInfo> {
+    return await fetchJson<SessionInfo>(`${sessionEndpoint}/login`, {
       method: "POST",
       body: JSON.stringify(req),
-      credentials: "include",
     });
   },
 
-  me: async function (): Promise<User> {
-    return await fetchJson<User>("sessions");
+  me: async function (): Promise<SessionInfo> {
+    return await fetchJson<SessionInfo>(`${sessionEndpoint}`);
+  },
+
+  logout: async function (): Promise<void> {
+    return await fetchVoid(`${sessionEndpoint}/logout`);
   },
 };

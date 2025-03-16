@@ -28,11 +28,13 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { ChevronsUpDown, LogOutIcon, UserIcon } from "lucide-react";
+import { useUser } from "@/features/user/UserProvider";
 
 export default function AppSidebar() {
   const { state } = useSidebar();
   const { pathname } = useLocation();
   const [searchParams, _] = useSearchParams();
+  const { user, logout } = useUser();
 
   const test: Record<string, string> = {
     status: "arrival",
@@ -113,8 +115,8 @@ export default function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
                   <UserIcon />
-                  <p className=" overflow-ellipsis whitespace-nowrap overflow-hidden">
-                    Username
+                  <p className=" overflow-ellipsis whitespace-nowrap overflow-hidden uppercase tracking-wider">
+                    {user?.username ?? "Username"}
                   </p>
                   <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -145,7 +147,7 @@ export default function AppSidebar() {
                 }
 
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={logout}>
                     <LogOutIcon />
                     Log out
                   </DropdownMenuItem>
