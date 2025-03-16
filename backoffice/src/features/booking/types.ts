@@ -1,21 +1,27 @@
 import { PaginateReq } from "@/core/paginate";
 import { BookingId } from "@/core/typeAliases";
+import { BookingSourceType, BookingStatusType, RoomType } from "@/core/types";
 
-export interface BookingFull {
+export interface Booking {
   id: BookingId;
-  firstName: string;
-  lastName: string;
+  paymentId: string;
+  roomType: RoomType;
+  status: BookingStatusType;
+  contactName: string;
   email: string;
-  telNum: string;
-  numAdult: number;
-  numChildren: number;
+  contactNumber: string;
   checkInDate: string;
   checkOutDate: string;
-  roomType: "DELUXE" | "SHIT";
-  hasBreakfast: boolean;
-  isWantPickup: boolean;
+  roomPrice: number;
+  numAdult: number;
+  numChildren: number;
+  hasAbf: boolean;
+  hasTransportation: boolean;
+  source: BookingSourceType;
 }
 
-export type BookingSort = "CHECK-IN-DATE";
-
-export type BookingFullPaginateReq = PaginateReq<BookingSort>;
+export type BookingId = number;
+export type BookingSort = Extract<keyof Booking, "id" | "checkInDate">;
+export const bookingSortEnum: BookingSort[] = ["id", "checkInDate"];
+export type BookingSearch = Partial<Booking>;
+export type BookingPaginateReq = PaginateReq<BookingSort, BookingSearch>;

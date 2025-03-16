@@ -57,6 +57,7 @@ export async function fetchJson<ResponseType>(
       ...options,
       headers: {
         "Content-Type": "application/json",
+        // "content-type": "application/json",
       },
       credentials: "include",
     });

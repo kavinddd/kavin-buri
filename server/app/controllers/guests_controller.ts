@@ -34,6 +34,7 @@ export default class GuestsController {
 
     const req = {
       ...DEFAULT_PAGINATE_REQ,
+      page: page || 1,
       size: size || DEFAULT_PAGINATE_REQ.size,
       sort: sort || DEFAULT_PAGINATE_REQ.sort,
       direction: direction || DEFAULT_PAGINATE_REQ.direction,

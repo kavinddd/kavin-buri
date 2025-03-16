@@ -1,70 +1,32 @@
 import DataTable from "@/components/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
-import { Booking, BookingFull } from "./types";
-import usePaginateBookings from "./hooks/useBooking";
+import { Booking, BookingSearch } from "./types";
+import { fetchBookings } from "./api";
+import { useMemo, useState } from "react";
+import PaginateDataTable from "@/components/datatable/PaginateDataTable";
+import { useParams, useSearchParams } from "react-router";
+import BookingSearchPanel from "./BookingSearchPanel";
 
-const bookings: Booking.Full[] = [
+const columns: ColumnDef<Booking>[] = [
   {
-    id: 1,
-    firstName: "Prommest",
-    lastName: "Kavindechatorn",
-    email: "prommest123@hotmail.com",
-    telNum: "092-313-7310",
-    numAdult: 2,
-    numChildren: 0,
-    checkInDate: "2024-03-20",
-    checkOutDate: "2024-03-30",
-    roomType: "DELUXE",
-    hasBreakfast: true,
-    isWantPickup: true,
+    accessorKey: "source",
+    header: "Source",
   },
   {
-    id: 2,
-    firstName: "Prommest",
-    lastName: "Kavindechatorn",
-    email: "prommest123@hotmail.com",
-    telNum: "092-313-7310",
-    numAdult: 2,
-    numChildren: 0,
-    checkInDate: "2024-03-20",
-    checkOutDate: "2024-03-30",
-    roomType: "DELUXE",
-    hasBreakfast: true,
-    isWantPickup: true,
-  },
-];
-
-const columns: ColumnDef<BookingFull>[] = [
-  {
-    accessorKey: "firstName",
-    header: "Firstname",
-  },
-  {
-    accessorKey: "lastName",
-    header: "Lastname",
+    accessorKey: "contactName",
+    header: "Contact Name",
   },
   {
     accessorKey: "email",
     header: "Email",
   },
   {
-    accessorKey: "telNum",
+    accessorKey: "contactNumber",
     header: "Tel No.",
   },
-
   {
     accessorKey: "roomType",
     header: "Room",
-  },
-
-  {
-    accessorKey: "hasBreakfast",
-    header: "ABF",
-  },
-
-  {
-    accessorKey: "isWantPickup",
-    header: "Transportation",
   },
   {
     accessorKey: "checkInDate",
@@ -74,12 +36,47 @@ const columns: ColumnDef<BookingFull>[] = [
     accessorKey: "checkOutDate",
     header: "Check-out",
   },
+  {
+    accessorKey: "numAdult",
+    header: "Adult",
+  },
+  {
+    accessorKey: "numChildren",
+    header: "Children",
+  },
+  {
+    accessorKey: "roomPrice",
+    header: "Price",
+  },
+  {
+    accessorKey: "hasAbf",
+    header: "ABF",
+  },
+  {
+    accessorKey: "hasTransportation",
+    header: "Transport.",
+  },
 ];
 
 export default function BookingPage() {
-  const { data, isLoading } = usePaginateBookings({
-    sort: "CHECK-IN-DATE",
-  });
+  const [params, _] = useSearchParams();
+  const [search, setSearch] = useState<BookingSearch>(params as BookingSearch);
 
-  return <DataTable data={bookings} columns={columns} />;
+  return (
+    <>
+      {
+        // <BookingSearchPanel
+        //   onSubmit={setSearch}
+        //   defaultSearch={params as BookingSearch}
+        //
+        // />
+      }
+      <PaginateDataTable
+        queryKey="bookings"
+        apis={fetchBookings}
+        search={search}
+        columns={columns}
+      />
+    </>
+  );
 }

@@ -11,7 +11,7 @@ import {
   UpdateBookingReq,
   updateBookingValidator,
 } from '#validators/booking'
-import vine from '@vinejs/vine'
+
 import { idNumberValidator } from '#validators/commons'
 
 @inject()
@@ -47,6 +47,7 @@ export default class BookingsController {
 
     const req = {
       ...DEFAULT_PAGINATE_REQ,
+      page: page || 1,
       size: size || DEFAULT_PAGINATE_REQ.size,
       sort: sort || DEFAULT_PAGINATE_REQ.sort,
       direction: direction || DEFAULT_PAGINATE_REQ.direction,

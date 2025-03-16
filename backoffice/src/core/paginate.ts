@@ -1,23 +1,40 @@
-export interface Paginated<T> {
-  data: T[];
+export const DEFAULT_PAGE_SIZE = 10;
+
+export type SortDirectionType = "asc" | "desc";
+
+export interface Paginated<DataType> {
+  data: DataType[];
   page: number;
-  totalCount: number;
+  total: number;
+  hasNextPage: number;
 }
 
-export interface PaginateReq<Sort extends string> {
+export interface PaginateReq<
+  Sort extends string,
+  Search extends Record<string, unknown>,
+> {
   page: number;
-  size: number;
-  sort: Sort;
-  direction?: "asc" | "desc";
+  size?: number;
+  sort?: Sort;
+  direction?: SortDirectionType;
+  search: Search;
 }
 
-export function toQueryParams<Sort extends string>(
-  paginateReq: PaginateReq<Sort>,
-): string {
-  return new URLSearchParams({
+export function toQueryParams<
+  Sort extends string,
+  Search extends Record<string, unknown>,
+>(paginateReq: PaginateReq<Sort, Search>): string {
+  const params = new URLSearchParams({
     page: paginateReq.page.toString(),
-    pageSize: paginateReq.size.toString(),
-    sort: paginateReq.sort,
     direction: paginateReq.direction || "asc",
-  }).toString();
+  });
+
+  if (paginateReq.sort) params.set("sort", paginateReq.sort);
+  if (paginateReq.size) params.set("size", paginateReq.size.toString());
+
+  Object.entries(paginateReq.search).forEach(([key, val]) => {
+    params.set(key, String(val));
+  });
+
+  return params.toString();
 }
