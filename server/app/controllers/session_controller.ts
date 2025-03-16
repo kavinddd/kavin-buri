@@ -18,9 +18,7 @@ export default class SessionController {
   async get({ auth }: HttpContext): Promise<SessionInfo> {
     const user = auth.getUserOrFail()
     await user.loadOnce('roleGroups')
-
     await Promise.all(user.roleGroups.map(async (roleGroup) => await roleGroup.loadOnce('roles')))
-
     const roles = user.roleGroups.flatMap((rg) => rg.roles)
 
     return { user: user, roles: roles }

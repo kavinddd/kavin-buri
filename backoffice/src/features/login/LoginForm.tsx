@@ -62,11 +62,11 @@ export default function LoginForm({
       .then((sessionInfo: SessionInfo) => {
         const user = transformSessionInfoToAuthUser(sessionInfo);
         setUser(user);
-        toast("Login Successfully");
+        toast.success("Login Successfully");
         navigate("/");
       })
       .catch(() => {
-        toast("Login Failed");
+        toast.error("Login Failed");
       });
   }
 

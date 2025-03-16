@@ -8,10 +8,11 @@ export default function LoginPage() {
   const { user, setUser } = useUser();
 
   useEffect(() => {
-    if (!user) return;
+    if (user) return;
     const fetchUser = async function () {
       try {
         const sessionInfo = await sessionApis.me();
+        console.log(sessionInfo);
         const fetchedUser = transformSessionInfoToAuthUser(sessionInfo);
         setUser(fetchedUser);
       } catch (e) {
