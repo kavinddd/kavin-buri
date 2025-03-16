@@ -2,11 +2,13 @@ import { Navigate } from "react-router";
 import { useUser } from "../user/UserProvider";
 import LoginForm, { transformSessionInfoToAuthUser } from "./LoginForm";
 import { sessionApis } from "./apis";
+import { useEffect } from "react";
 
 export default function LoginPage() {
   const { user, setUser } = useUser();
 
-  if (!user) {
+  useEffect(() => {
+    if (!user) return;
     const fetchUser = async function () {
       try {
         const sessionInfo = await sessionApis.me();
@@ -18,7 +20,7 @@ export default function LoginPage() {
     };
 
     fetchUser();
-  }
+  }, [user, setUser]);
 
   if (user) return <Navigate to="/" />;
 

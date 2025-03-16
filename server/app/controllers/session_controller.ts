@@ -18,7 +18,9 @@ export default class SessionController {
   async get({ auth }: HttpContext): Promise<SessionInfo> {
     const user = auth.getUserOrFail()
     await user.loadOnce('roleGroups')
+
     await Promise.all(user.roleGroups.map(async (roleGroup) => await roleGroup.loadOnce('roles')))
+
     const roles = user.roleGroups.flatMap((rg) => rg.roles)
 
     return { user: user, roles: roles }
@@ -37,8 +39,8 @@ export default class SessionController {
     const user = await User.verifyCredentials(username, password)
 
     await user.loadOnce('roleGroups')
-    await Promise.all(user.roleGroups.map(async (roleGroup) => await roleGroup.load('roles')))
-    const roles = user.roleGroups.flatMap((rg) => rg.roles)
+    const roleGroupIds = user.roleGroups.map((it) => it.id)
+    const roles = await Role.findMany(roleGroupIds)
 
     /**
      * Step 3: Login user (use web guard)
@@ -51,5 +53,12 @@ export default class SessionController {
       user: user,
       roles: roles,
     }
+  }
+
+  async logout({ auth }: HttpContext) {
+    const user = auth.getUserOrFail()
+    auth.use('web').logout()
+
+    this.logger.info(`${user.username} is logged-out successfully`)
   }
 }

@@ -10,6 +10,7 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 import UsersController from '#controllers/users_controller'
+import { Session } from 'node:inspector/promises'
 
 const RoleGroupsController = () => import('#controllers/role_groups_controller')
 const RoomsController = () => import('#controllers/rooms_controller')
@@ -52,6 +53,7 @@ router
         router
           .group(() => {
             router.get('/', [SessionController, 'get']).as('me')
+            router.get('/logout', [SessionController, 'logout']).as('logout')
           })
           .prefix('/sessions')
           .as('sessions')
