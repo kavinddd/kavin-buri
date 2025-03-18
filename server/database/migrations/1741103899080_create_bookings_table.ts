@@ -8,21 +8,34 @@ export default class extends BaseSchema {
       table.increments('id')
       //https://github.com/orgs/adonisjs/discussions/1416
       table.uuid('payment_id').defaultTo(this.db.knexRawQuery('gen_random_uuid()'))
-      table.integer('room_price').notNullable()
-      table.enu('room_type', ['SUPERIOR_TWIN', 'SUPERIOR_DOUBLE', 'DELUXE', 'SUITE']).notNullable()
+      table.integer('room_type_id').unsigned().references('id').inTable('room_types').notNullable()
+      table.integer('room_id').unsigned().references('id').inTable('rooms').notNullable()
+      table.string('confirm_booking_no').unique()
       table.string('contact_name').notNullable()
       table.string('email').notNullable()
       table.string('contact_number').notNullable()
-      table.integer('num_adult').notNullable()
-      table.integer('num_children').notNullable()
-      table.date('check_in_date').notNullable()
-      table.date('check_out_date').notNullable()
-      table.boolean('has_abf').defaultTo(false) // ABF included?
-      table.boolean('has_transportation').defaultTo(false) // Transportation included?
+      table.text('remark')
+      table
+        .enu('status', ['RESERVED', 'CHECKED-IN', 'CHECKED-OUT', 'NO-SHOW', 'CANCELLED'])
+        .notNullable()
+        .defaultTo('RESERVED')
       table
         .enu('source', ['WALK-IN', 'PHONE', 'WEBSITE', 'OTHERS'])
         .notNullable()
         .defaultTo('OTHERS')
+
+      table.date('check_in_date').notNullable()
+      table.date('check_out_date').notNullable()
+      table.smallint('num_adult').notNullable()
+      table.smallint('num_children').notNullable()
+      table.integer('room_price').unsigned().notNullable()
+      table.boolean('has_abf').defaultTo(false)
+      table.boolean('has_transportation').defaultTo(false)
+
+      table.timestamp('created_at').notNullable()
+      table.integer('created_by').unsigned().references('id').inTable('users')
+      table.timestamp('updated_at').notNullable()
+      table.integer('updated_by').unsigned().references('id').inTable('users')
     })
   }
 

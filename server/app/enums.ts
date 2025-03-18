@@ -27,11 +27,11 @@ export const roomStatusEnum: RoomStatusType[] = [
   'RESERVED',
 ]
 
-export const reservationEnum: ReservationType[] = [
-  'NON-GUARANTEED',
-  'DEPOSIT-RECEIVED',
-  'GUARANTEED',
-]
+// export const reservationEnum: ReservationType[] = [
+//   'NON-GUARANTEED',
+//   'DEPOSIT-RECEIVED',
+//   'GUARANTEED',
+// ]
 
 export const bookingStatusEnum: BookingStatusType[] = [
   'RESERVED',

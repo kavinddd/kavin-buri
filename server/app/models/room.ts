@@ -5,6 +5,7 @@ import User, { type UserId } from '#models/user'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { ModelAttributes } from '@adonisjs/lucid/types/model'
 import { PaginateReq } from '../paginate.js'
+import type { RoomTypeId } from './room_type.js'
 
 export default class Room extends BaseModel {
   @column({ isPrimary: true })
@@ -14,7 +15,7 @@ export default class Room extends BaseModel {
   declare code: string
 
   @column()
-  declare roomType: RoomType
+  declare roomTypeId: RoomTypeId
 
   @column()
   declare status: RoomStatusType
@@ -27,9 +28,6 @@ export default class Room extends BaseModel {
 
   @column()
   declare maxChildren: number
-
-  @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime

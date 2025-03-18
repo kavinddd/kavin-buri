@@ -4,7 +4,7 @@ import type { RoleNameType } from '../types.ts'
 
 export default class Role extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number
+  declare id: RoleId
 
   @column()
   declare name: RoleNameType
@@ -12,3 +12,5 @@ export default class Role extends BaseModel {
   @column()
   declare description: string
 }
+
+export type RoleId = number

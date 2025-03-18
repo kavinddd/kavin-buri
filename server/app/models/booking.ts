@@ -1,11 +1,10 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
-import { type UUID } from 'crypto'
 import type { BookingSourceType, BookingStatusType, RoomType } from '../types.js'
-import BookingLog from '#models/booking_log'
-import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 import { PaginateReq } from '../paginate.js'
 import { ModelAttributes } from '@adonisjs/lucid/types/model'
+import type { UserId } from './user.js'
+import type { RoomTypeId } from './room_type.js'
 
 export default class Booking extends BaseModel {
   @column({ isPrimary: true })
@@ -15,10 +14,10 @@ export default class Booking extends BaseModel {
   declare paymentId: string
 
   @column()
-  declare roomType: RoomType
+  declare roomTypeId: RoomTypeId
 
   @column()
-  declare status: BookingStatusType
+  declare confirmBookingNo: string
 
   @column()
   declare contactName: string
@@ -28,6 +27,15 @@ export default class Booking extends BaseModel {
 
   @column()
   declare contactNumber: string
+
+  @column()
+  declare remark: string
+
+  @column()
+  declare status: BookingStatusType
+
+  @column()
+  declare source: BookingSourceType
 
   @column.date()
   declare checkInDate: DateTime
@@ -51,17 +59,16 @@ export default class Booking extends BaseModel {
   declare hasTransportation: boolean
 
   @column()
-  declare source: BookingSourceType
+  declare createdBy: UserId
 
-  @hasOne(() => BookingLog, {
-    onQuery: (query) => {
-      query.orderBy('created_at').limit(1)
-    },
-  })
-  declare latestLog: HasOne<typeof BookingLog>
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
 
-  @hasMany(() => BookingLog)
-  declare logs: HasMany<typeof BookingLog>
+  @column()
+  declare updatedBy: UserId
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
 }
 
 export type BookingId = number
