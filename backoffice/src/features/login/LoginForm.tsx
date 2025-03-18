@@ -78,7 +78,14 @@ export default function LoginForm({
             <form className="p-6 md:p-8" onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
-                  <h1 className="text-2xl font-bold">Kavin Buri | BO</h1>
+                  <div className="relative hidden bg-muted md:block">
+                    <img
+                      src="/images/logo-wide.png"
+                      alt="Image"
+                      className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                    />
+                  </div>
+                  <h1 className="text-2xl font-bold">Back Office</h1>
                 </div>
                 <FormField
                   control={form.control}
@@ -114,7 +121,7 @@ export default function LoginForm({
             </form>
             <div className="relative hidden bg-muted md:block">
               <img
-                src="/placeholder.svg"
+                src="/images/logo.jpg"
                 alt="Image"
                 className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
               />

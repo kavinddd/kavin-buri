@@ -12,7 +12,6 @@ export default function LoginPage() {
     const fetchUser = async function () {
       try {
         const sessionInfo = await sessionApis.me();
-        console.log(sessionInfo);
         const fetchedUser = transformSessionInfoToAuthUser(sessionInfo);
         setUser(fetchedUser);
       } catch (e) {
