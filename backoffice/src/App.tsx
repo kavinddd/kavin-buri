@@ -30,7 +30,7 @@ function App() {
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-      <Toaster />
+      <Toaster expand richColors={true} theme="light" />
     </UserProvider>
   );
 }
