@@ -6,7 +6,7 @@ export interface Paginated<DataType> {
   data: DataType[];
   page: number;
   total: number;
-  hasNextPage: number;
+  hasNext: number;
 }
 
 export interface PaginateReq<

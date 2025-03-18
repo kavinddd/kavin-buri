@@ -135,6 +135,7 @@ export default function PaginateDataTable<
   const sizePerPage = DEFAULT_PAGE_SIZE;
   const start = sizePerPage * (currentPage - 1) + 1;
   const end = sizePerPage * (currentPage - 1) + size;
+  const maxPage = Math.ceil((paginated?.total ?? sizePerPage) / sizePerPage);
 
   const pages =
     currentPage <= 3
@@ -145,11 +146,9 @@ export default function PaginateDataTable<
         });
 
   function handleChangePage(page: number) {
-    const maxPage = paginated?.total ?? sizePerPage / sizePerPage;
-    console.log(maxPage);
     if (page < 1) return;
     if (page === currentPage) return;
-    if (page > currentPage && paginated?.hasNextPage) return;
+    if (page > currentPage && !paginated?.hasNext) return;
     if (page > maxPage) return;
 
     setCurrentPage(page);
@@ -216,14 +215,20 @@ export default function PaginateDataTable<
         <PaginationContent>
           <PaginationItem className="cursor-pointer">
             <PaginationPrevious
-              className="cursor-pointer"
+              className={cn(
+                "cursor-pointer",
+                currentPage === 1 && "cursor-not-allowed text-muted-foreground",
+              )}
               onClick={() => handleChangePage(currentPage - 1)}
             />
           </PaginationItem>
           {pages.map((page) => (
             <PaginationItem
               key={page}
-              className="cursor-pointer"
+              className={cn(
+                "cursor-pointer",
+                page > maxPage && "cursor-not-allowed text-muted-foreground",
+              )}
               onClick={() => handleChangePage(page)}
             >
               <PaginationLink
@@ -234,7 +239,10 @@ export default function PaginateDataTable<
             </PaginationItem>
           ))}
           <PaginationItem
-            className="cursor-pointer"
+            className={cn(
+              "cursor-pointer",
+              !paginated?.hasNext && "cursor-not-allowed text-muted-foreground",
+            )}
             onClick={() => handleChangePage(currentPage + 1)}
           >
             <PaginationNext />
