@@ -1,10 +1,12 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
-import type { BookingSourceType, BookingStatusType, RoomType } from '../types.js'
+import { BaseModel, column, hasOne } from '@adonisjs/lucid/orm'
+import type { BookingSourceType, BookingStatusType } from '../types.js'
 import { PaginateReq } from '../paginate.js'
 import { ModelAttributes } from '@adonisjs/lucid/types/model'
 import type { UserId } from './user.js'
 import type { RoomTypeId } from './room_type.js'
+import RoomType from './room_type.js'
+import type { HasOne } from '@adonisjs/lucid/types/relations'
 
 export default class Booking extends BaseModel {
   @column({ isPrimary: true })
@@ -69,6 +71,9 @@ export default class Booking extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @hasOne(() => RoomType)
+  declare roomType: HasOne<typeof RoomType>
 }
 
 export type BookingId = number

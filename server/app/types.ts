@@ -11,7 +11,7 @@ export type RoleNameType =
   | 'READ_USER'
   | 'EDIT_USER'
 
-export type RoomType = 'SUPERIOR_TWIN' | 'SUPERIOR_DOUBLE' | 'DELUXE' | 'SUITE'
+export type RoomTypeNameType = 'SUPERIOR_TWIN' | 'SUPERIOR_DOUBLE' | 'DELUXE' | 'SUITE'
 
 export type RoomStatusType = 'OUT_OF_SERVICE' | 'OCCUPIED' | 'AVAILABLE' | 'RESERVED'
 

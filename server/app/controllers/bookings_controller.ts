@@ -23,7 +23,7 @@ export default class BookingsController {
   async list() {
     return
   }
-  async store({ request, response, inertia }: HttpContext) {
+  async store({ inertia }: HttpContext) {
     return inertia.render('BookingPage')
   }
 
@@ -57,7 +57,7 @@ export default class BookingsController {
     return this.service.listPaginate(req)
   }
 
-  async get({ request, bouncer, response, params }: HttpContext) {
+  async get({ request, bouncer, response }: HttpContext) {
     if (await bouncer.with(BookingPolicy).denies('get')) {
       return response.forbidden('No access')
     }
@@ -74,7 +74,7 @@ export default class BookingsController {
     }
 
     const req: CreateBookingReq = await request.validateUsing(createBookingValidator)
-    return this.service.create(req, auth.user)
+    return this.service.create(req, auth.getUserOrFail())
   }
 
   async update({ request, bouncer, response }: HttpContext) {

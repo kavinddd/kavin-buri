@@ -27,8 +27,7 @@ export class RoomsService {
     if (search) {
       if (search.id) query.where('id', '=', search.id)
       if (search.code) query.where('code', 'ilike', `%${search.code}%`)
-      if (search.roomType) query.where('room_type', '=', search.roomType)
-      if (search.maxAdult) query.where('max_adult', '=', search.maxAdult)
+      if (search.roomTypeId) query.where('room_type_id', '=', search.roomTypeId)
     }
 
     query.orderBy(sort ? this.sortFields[sort] : this.defaultSort, direction)

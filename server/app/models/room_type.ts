@@ -1,10 +1,14 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { ModelAttributes } from '@adonisjs/lucid/types/model'
 import { PaginateReq } from '../paginate.js'
+import type { RoomTypeNameType } from '../types.js'
 
 export default class RoomType extends BaseModel {
   @column({ isPrimary: true })
   declare id: RoomTypeId
+
+  @column()
+  declare name: RoomTypeNameType
 
   @column()
   declare areaSqMeter: number

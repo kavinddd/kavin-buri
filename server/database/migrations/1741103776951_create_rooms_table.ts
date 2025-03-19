@@ -8,10 +8,11 @@ export default class extends BaseSchema {
       table.increments('id')
       table.string('code').notNullable().unique()
       table.integer('room_type_id').unsigned().references('id').inTable('room_types')
-      table.enu('status', ['AVAILABLE', 'OUT_OF_SERVICE', 'OCCUPIED', 'RESERVED']).notNullable()
+      table
+        .enu('status', ['AVAILABLE', 'OUT_OF_SERVICE', 'OCCUPIED', 'RESERVED'])
+        .notNullable()
+        .defaultTo('AVAILABLE')
       table.smallint('floor_no').notNullable().unsigned()
-      table.smallint('max_adult').notNullable()
-      table.smallint('max_children').notNullable()
       table.timestamp('updated_at').notNullable()
       table.integer('updated_by').unsigned().references('id').inTable('users') // Foreign key reference to app_users table
     })

@@ -1,7 +1,7 @@
 import vine from '@vinejs/vine'
 import { Infer } from '@vinejs/vine/types'
-import type { BookingStatusType, RoomType } from '../types.js'
-import { bookingSourceEnum, directionEnum, roomTypeEnum } from '../enums.js'
+import type { BookingStatusType, RoomTypeNameType } from '../types.js'
+import { bookingSourceEnum, directionEnum, roomTypeNameEnum } from '../enums.js'
 import { DateTime } from 'luxon'
 import { bookingSortEnum } from '#models/booking'
 
@@ -18,7 +18,7 @@ export const paginateBookingValidator = vine.compile(
     sort: vine.enum(bookingSortEnum).optional(),
 
     // search, not common
-    roomType: vine.enum(roomTypeEnum).optional(),
+    roomType: vine.enum(roomTypeNameEnum).optional(),
     checkInDate: vine
       .date()
       .transform((date) => DateTime.fromJSDate(date))
@@ -33,7 +33,7 @@ export type PaginateBookingReq = Infer<typeof paginateBookingValidator>
 
 export const createBookingValidator = vine.compile(
   vine.object({
-    roomType: vine.enum(roomTypeEnum),
+    roomTypeId: vine.number(),
     contactName: vine.string().trim(),
     email: vine.string().trim(),
     contactNumber: vine.string().trim(),
@@ -51,7 +51,7 @@ export type CreateBookingReq = Infer<typeof createBookingValidator>
 
 export const updateBookingValidator = vine.compile(
   vine.object({
-    roomType: vine.enum(roomTypeEnum).optional(),
+    roomTypeId: vine.number().optional(),
     contactName: vine.string().trim().optional(),
     email: vine.string().trim().optional(),
     contactNumber: vine.string().trim().optional(),

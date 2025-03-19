@@ -1,8 +1,6 @@
 import Booking, { BookingId, BookingPaginateReq, BookingSort } from '#models/booking'
-import db from '@adonisjs/lucid/services/db'
 import { Paginated } from '../paginate.js'
 import { CreateBookingReq, UpdateBookingReq } from '#validators/booking'
-import BookingLog from '#models/booking_log'
 import { inject } from '@adonisjs/core'
 import { Logger } from '@adonisjs/core/logger'
 import User from '#models/user'
@@ -28,7 +26,7 @@ export class BookingsService {
       if (search.checkInDate) query.where('check_in_date', '=', search.checkInDate.toSQLDate()!!)
       if (search.checkOutDate)
         query.where('check_out_date', '=', search.checkOutDate?.toSQLDate()!!)
-      if (search.roomType) query.where('room_type', '=', search.roomType)
+      if (search.roomTypeId) query.where('room_type_id', '=', search.roomTypeId)
     }
 
     query.orderBy(sort ? this.sortFields[sort] : this.defaultSort, direction)
@@ -47,20 +45,19 @@ export class BookingsService {
   }
 
   async create(req: CreateBookingReq, user: User): Promise<BookingId> {
-    const booking = await Booking.create(req)
-
-    const bookingLog = await booking.related('logs').create({
-      status: 'RESERVED',
+    const booking = await Booking.create({
+      ...req,
       createdBy: user.id,
+      updatedBy: user.id,
     })
 
     this.logger.info(`Booking (${booking.id}) is created`)
     return booking.id
   }
 
-  async update(id: BookingId, req: UpdateBookingReq): Promise<BookingId> {
+  async update(id: BookingId, req: UpdateBookingReq, user: User): Promise<BookingId> {
     const booking = await Booking.findOrFail(id)
-    booking.merge(req)
+    booking.merge({ ...req, updatedBy: user.id })
     await booking.save()
     return booking.id
   }

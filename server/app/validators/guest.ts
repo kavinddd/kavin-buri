@@ -1,6 +1,6 @@
 import vine from '@vinejs/vine'
 import { Infer } from '@vinejs/vine/types'
-import { directionEnum, roleNameEnum, roomStatusEnum, roomTypeEnum } from '../enums.js'
+import { directionEnum, roleNameEnum, roomStatusEnum, roomTypeNameEnum } from '../enums.js'
 import { roomSortEnum } from '#models/room'
 import { DateTime } from 'luxon'
 import { guestSortEnum } from '#models/guest'

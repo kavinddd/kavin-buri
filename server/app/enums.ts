@@ -5,7 +5,7 @@ import {
   ReservationType,
   RoleNameType,
   RoomStatusType,
-  RoomType,
+  RoomTypeNameType,
 } from './types.js'
 
 export const roleNameEnum: RoleNameType[] = [
@@ -18,7 +18,12 @@ export const roleNameEnum: RoleNameType[] = [
   'EDIT_ROLE_GROUP',
 ]
 
-export const roomTypeEnum: RoomType[] = ['SUPERIOR_TWIN', 'SUPERIOR_DOUBLE', 'DELUXE', 'SUITE']
+export const roomTypeNameEnum: RoomTypeNameType[] = [
+  'SUPERIOR_TWIN',
+  'SUPERIOR_DOUBLE',
+  'DELUXE',
+  'SUITE',
+]
 
 export const roomStatusEnum: RoomStatusType[] = [
   'OUT_OF_SERVICE',
