@@ -74,10 +74,11 @@ export default class BookingsController {
     }
 
     const req: CreateBookingReq = await request.validateUsing(createBookingValidator)
+
     return this.service.create(req, auth.getUserOrFail())
   }
 
-  async update({ request, bouncer, response }: HttpContext) {
+  async update({ request, bouncer, response, auth }: HttpContext) {
     if (await bouncer.with(BookingPolicy).denies('create')) {
       return response.forbidden('No access')
     }
@@ -88,7 +89,7 @@ export default class BookingsController {
 
     const req: UpdateBookingReq = await request.validateUsing(updateBookingValidator)
 
-    return this.service.update(id, req)
+    return this.service.update(id, req, auth.getUserOrFail())
   }
 
   async delete({ params, bouncer, response }: HttpContext) {

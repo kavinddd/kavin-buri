@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 export const DEFAULT_PAGE_SIZE = 10;
 
 export type SortDirectionType = "asc" | "desc";
@@ -33,7 +35,10 @@ export function toQueryParams<
   if (paginateReq.size) params.set("size", paginateReq.size.toString());
 
   Object.entries(paginateReq.search).forEach(([key, val]) => {
-    params.set(key, String(val));
+    params.set(
+      key,
+      val instanceof Date ? format(val, "yyyy-MM-dd") : String(val),
+    );
   });
 
   return params.toString();

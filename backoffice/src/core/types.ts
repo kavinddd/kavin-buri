@@ -1,3 +1,10 @@
+import {
+  bookingSourceEnum,
+  bookingStatusEnum,
+  roomStatusEnum,
+  roomTypeNameEnum,
+} from "./enums";
+
 export type RoleNameType =
   | "ADMIN"
   | "READ_BOOKING"
@@ -11,24 +18,21 @@ export type RoleNameType =
   | "READ_USER"
   | "EDIT_USER";
 
-export type RoomType = "SUPERIOR_TWIN" | "SUPERIOR_DOUBLE" | "DELUXE" | "SUITE";
-
-export type RoomStatusType =
-  | "OUT_OF_SERVICE"
-  | "OCCUPIED"
-  | "AVAILABLE"
-  | "RESERVED";
+export type RoomTypeNameType = (typeof roomTypeNameEnum)[number];
+export type RoomStatusType = (typeof roomStatusEnum)[number];
 
 export type ReservationType =
   | "NON-GUARANTEED"
   | "DEPOSIT-RECEIVED"
   | "GUARANTEED";
 
-export type BookingStatusType =
-  | "RESERVED"
-  | "CHECKED-IN"
-  | "CHECKED-OUT"
-  | "NO-SHOW"
-  | "CANCELLED";
+export type BookingStatusType = (typeof bookingStatusEnum)[number];
+// | "RESERVED"
+// | "CHECKED-IN"
+// | "CHECKED-OUT"
+// | "NO-SHOW"
+// | "CANCELLED";
 
-export type BookingSourceType = "WALK-IN" | "PHONE" | "WEBSITE" | "OTHERS";
+export type BookingSourceType = (typeof bookingSourceEnum)[number];
+
+export type FormMode = "SHOW" | "CREATE" | "EDIT";

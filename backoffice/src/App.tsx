@@ -1,5 +1,5 @@
 import "./App.css";
-import { Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 import DashboardPage from "./features/dashboard/DashboardPage";
 import LoginPage from "./features/login/LoginPage";
 import MainLayout from "./components/layouts/MainLayout";
@@ -9,6 +9,10 @@ import { Toaster } from "./components/ui/sonner";
 import BookingPage from "./features/booking/BookingPage";
 import NotFoundPage from "./components/errors/NotFoundPage";
 import RoomPage from "./features/rooms/RoomPage";
+import BookingForm from "./features/booking/BookingForm";
+import BookingCreatePage from "./features/booking/BookingCreatePage";
+import BookingShowPage from "./features/booking/BookingShowPage";
+import BookingEditPage from "./features/booking/BookingEditPage";
 
 function App() {
   return (
@@ -23,8 +27,14 @@ function App() {
             </WithUser>
           }
         >
-          <Route index element={<DashboardPage />} />
-          <Route path="booking" element={<BookingPage />} />
+          <Route path="/" element={<Navigate to="dashboard" />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="booking">
+            <Route index element={<BookingPage />} />
+            <Route path="show/:id" element={<BookingShowPage />} />
+            <Route path="create" element={<BookingCreatePage />} />
+            <Route path="edit/:id" element={<BookingEditPage />} />
+          </Route>
           <Route path="room" element={<RoomPage />} />
         </Route>
 

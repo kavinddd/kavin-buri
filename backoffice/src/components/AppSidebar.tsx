@@ -60,16 +60,12 @@ export default function AppSidebar() {
             <React.Fragment key={nav.url}>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link
-                    to={nav.url ?? "/"}
-                    // className={cn(
-                    //   pathname === nav.url &&
-                    //     "bg-primary text-primary-foreground ",
-                    // )}
-                  >
+                  <Link to={nav.url ?? "/"}>
                     {nav.icon && (
                       <nav.icon
-                        className={cn(pathname === nav.url && "text-primary")}
+                        className={cn(
+                          pathname.startsWith(nav.url!) && "text-primary",
+                        )}
                       />
                     )}
                     <p>{nav.label}</p>

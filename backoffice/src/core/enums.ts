@@ -1,12 +1,5 @@
 import type { SortDirectionType } from "./paginate.js";
-import type {
-  BookingSourceType,
-  BookingStatusType,
-  ReservationType,
-  RoleNameType,
-  RoomStatusType,
-  RoomType,
-} from "./types.js";
+import type { ReservationType, RoleNameType } from "./types.js";
 
 export const roleNameEnum: RoleNameType[] = [
   "ADMIN",
@@ -18,19 +11,19 @@ export const roleNameEnum: RoleNameType[] = [
   "EDIT_ROLE_GROUP",
 ];
 
-export const roomTypeEnum: RoomType[] = [
+export const roomTypeNameEnum = [
   "SUPERIOR_TWIN",
   "SUPERIOR_DOUBLE",
   "DELUXE",
   "SUITE",
-];
+] as const;
 
-export const roomStatusEnum: RoomStatusType[] = [
+export const roomStatusEnum = [
   "OUT_OF_SERVICE",
   "OCCUPIED",
   "AVAILABLE",
   "RESERVED",
-];
+] as const;
 
 export const reservationEnum: ReservationType[] = [
   "NON-GUARANTEED",
@@ -38,19 +31,19 @@ export const reservationEnum: ReservationType[] = [
   "GUARANTEED",
 ];
 
-export const bookingStatusEnum: BookingStatusType[] = [
+export const bookingStatusEnum = [
   "RESERVED",
   "CHECKED-IN",
   "CHECKED-OUT",
   "NO-SHOW",
   "CANCELLED",
-];
+] as const;
 
-export const bookingSourceEnum: BookingSourceType[] = [
+export const bookingSourceEnum = [
   "WALK-IN",
   "PHONE",
   "WEBSITE",
   "OTHERS",
-];
+] as const;
 
 export const directionEnum: SortDirectionType[] = ["asc", "desc"];

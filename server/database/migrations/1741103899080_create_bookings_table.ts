@@ -9,7 +9,7 @@ export default class extends BaseSchema {
       //https://github.com/orgs/adonisjs/discussions/1416
       table.uuid('payment_id').defaultTo(this.db.knexRawQuery('gen_random_uuid()'))
       table.integer('room_type_id').unsigned().references('id').inTable('room_types').notNullable()
-      table.integer('room_id').unsigned().references('id').inTable('rooms').notNullable()
+      table.integer('room_id').unsigned().references('id').inTable('rooms')
       table.string('confirm_booking_no').unique()
       table.string('contact_name').notNullable()
       table.string('email').notNullable()

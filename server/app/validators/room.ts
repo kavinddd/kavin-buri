@@ -26,7 +26,7 @@ export type PaginateRoomReq = Infer<typeof paginateRoomValidator>
 export const createRoomValidator = vine.compile(
   vine.object({
     code: vine.string(),
-    roomTypeId: vine.number(),
+    roomTypeName: vine.enum(roomTypeNameEnum).optional(),
     status: vine.enum(roomStatusEnum),
     floorNo: vine.number().min(1).max(10),
     maxAdult: vine.number().min(1).max(10),
@@ -38,7 +38,7 @@ export type CreateRoomReq = Infer<typeof createRoomValidator>
 export const updateRoomValidator = vine.compile(
   vine.object({
     code: vine.string().optional(),
-    roomTypeId: vine.number().optional(),
+    roomTypeName: vine.enum(roomTypeNameEnum).optional(),
     status: vine.enum(roomStatusEnum).optional(),
     floorNo: vine.number().min(1).max(10).optional(),
     maxAdult: vine.number().min(1).max(10).optional(),

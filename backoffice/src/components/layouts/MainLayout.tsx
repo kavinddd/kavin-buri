@@ -7,7 +7,7 @@ import navs from "@/core/navs";
 export default function MainLayout() {
   const { pathname } = useLocation();
 
-  const title = navs.find((it) => it.url === pathname)?.label || "";
+  const title = navs.find((it) => pathname.startsWith(it.url!))?.label || "";
 
   return (
     <div className="bg-accent">

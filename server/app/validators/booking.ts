@@ -1,7 +1,7 @@
 import vine from '@vinejs/vine'
 import { Infer } from '@vinejs/vine/types'
 import type { BookingStatusType, RoomTypeNameType } from '../types.js'
-import { bookingSourceEnum, directionEnum, roomTypeNameEnum } from '../enums.js'
+import { bookingSourceEnum, bookingStatusEnum, directionEnum, roomTypeNameEnum } from '../enums.js'
 import { DateTime } from 'luxon'
 import { bookingSortEnum } from '#models/booking'
 
@@ -18,13 +18,17 @@ export const paginateBookingValidator = vine.compile(
     sort: vine.enum(bookingSortEnum).optional(),
 
     // search, not common
+    contactName: vine.string().optional(),
+    email: vine.string().optional(),
+    source: vine.enum(bookingSourceEnum).optional(),
+    status: vine.enum(bookingStatusEnum).optional(),
     roomType: vine.enum(roomTypeNameEnum).optional(),
     checkInDate: vine
-      .date()
+      .date({ formats: ['YYYY-MM-DD', 'iso8601'] })
       .transform((date) => DateTime.fromJSDate(date))
       .optional(),
     checkOutDate: vine
-      .date()
+      .date({ formats: ['YYYY-MM-DD', 'iso8601'] })
       .transform((date) => DateTime.fromJSDate(date))
       .optional(),
   })
@@ -33,12 +37,14 @@ export type PaginateBookingReq = Infer<typeof paginateBookingValidator>
 
 export const createBookingValidator = vine.compile(
   vine.object({
-    roomTypeId: vine.number(),
+    roomTypeName: vine.enum(roomTypeNameEnum),
     contactName: vine.string().trim(),
     email: vine.string().trim(),
     contactNumber: vine.string().trim(),
-    checkInDate: vine.date().transform((date) => DateTime.fromJSDate(date)),
-    checkOutDate: vine.date().transform((date) => DateTime.fromJSDate(date)),
+    checkInDate: vine.date({ formats: ['iso8601'] }).transform((date) => DateTime.fromJSDate(date)),
+    checkOutDate: vine
+      .date({ formats: ['iso8601'] })
+      .transform((date) => DateTime.fromJSDate(date)),
     roomPrice: vine.number(),
     numAdult: vine.number(),
     numChildren: vine.number(),
@@ -51,16 +57,16 @@ export type CreateBookingReq = Infer<typeof createBookingValidator>
 
 export const updateBookingValidator = vine.compile(
   vine.object({
-    roomTypeId: vine.number().optional(),
+    roomTypeName: vine.enum(roomTypeNameEnum),
     contactName: vine.string().trim().optional(),
     email: vine.string().trim().optional(),
     contactNumber: vine.string().trim().optional(),
     checkInDate: vine
-      .date()
+      .date({ formats: ['iso8601'] })
       .transform((date) => DateTime.fromJSDate(date))
       .optional(),
     checkOutDate: vine
-      .date()
+      .date({ formats: ['iso8601'] })
       .transform((date) => DateTime.fromJSDate(date))
       .optional(),
     roomPrice: vine.number().optional(),

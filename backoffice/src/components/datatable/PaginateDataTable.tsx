@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import SkeletonTableRow from "./SkeletonTableRow";
 import { toast } from "sonner";
 import { DEFAULT_REACT_QUERY_STALE_TIME } from "@/core/constants";
+import { formatDate } from "date-fns";
 
 function useQueryPaginate<
   Data,
@@ -34,7 +35,7 @@ function useQueryPaginate<
   Search extends Record<string, unknown>,
 >({
   queryKey,
-  apis,
+  api,
   sort,
   ascending,
   size = DEFAULT_PAGE_SIZE,
@@ -42,14 +43,23 @@ function useQueryPaginate<
   page = 1,
 }: {
   queryKey: string;
-  apis: (req: PaginateReq<Sort, Search>) => Promise<Paginated<Data>>;
+  api: (req: PaginateReq<Sort, Search>) => Promise<Paginated<Data>>;
   sort?: Sort;
   ascending?: boolean;
   size?: number;
   search: Search;
   page?: number;
 }) {
-  const searchStr = useMemo(() => JSON.stringify(search), [search]);
+  const searchStr = useMemo(
+    () =>
+      JSON.stringify(
+        Object.entries(search).map(([key, val]) => {
+          if (val instanceof Date) return [key, formatDate(val, "yyyy-MM-dd")];
+          return [key, val];
+        }),
+      ),
+    [search],
+  );
   const memoQueryKey = useMemo(
     () => [
       queryKey,
@@ -76,7 +86,7 @@ function useQueryPaginate<
         search: search,
       };
 
-      return apis(req);
+      return api(req);
     },
     staleTime: DEFAULT_REACT_QUERY_STALE_TIME,
   });
@@ -89,7 +99,7 @@ interface DataTableProps<
   Search extends Record<string, unknown>,
 > {
   columns: ColumnDef<TData, TValue>[];
-  apis: (req: PaginateReq<Sort, Search>) => Promise<Paginated<TData>>;
+  api: (req: PaginateReq<Sort, Search>) => Promise<Paginated<TData>>;
   search: Search;
   queryKey: string;
 }
@@ -101,7 +111,7 @@ export default function PaginateDataTable<
   Search extends Record<string, unknown>,
 >({
   columns,
-  apis,
+  api,
   search,
   queryKey,
 }: DataTableProps<TData, TValue, Sort, Search>) {
@@ -114,7 +124,7 @@ export default function PaginateDataTable<
     isError,
     isFetching,
   } = useQueryPaginate({
-    apis: apis,
+    api: api,
     search: search,
     page: currentPage,
     queryKey: queryKey,
@@ -133,7 +143,7 @@ export default function PaginateDataTable<
   const total = paginated?.total;
   const size = paginated?.data.length ?? 0;
   const sizePerPage = DEFAULT_PAGE_SIZE;
-  const start = sizePerPage * (currentPage - 1) + 1;
+  const start = sizePerPage * (currentPage - 1);
   const end = sizePerPage * (currentPage - 1) + size;
   const maxPage = Math.ceil((paginated?.total ?? sizePerPage) / sizePerPage);
 
@@ -210,7 +220,7 @@ export default function PaginateDataTable<
 
       <Pagination className="flex-1 items-center justify-between mt-2">
         <p className="text-sm text-muted-foreground">
-          {`Showing of ${start} to ${end} of ${total} entries`}
+          {`Showing of ${size ? start + 1 : 0} to ${end} of ${total || 0} entries`}
         </p>
         <PaginationContent>
           <PaginationItem className="cursor-pointer">

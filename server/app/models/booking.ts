@@ -1,12 +1,13 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasOne } from '@adonisjs/lucid/orm'
-import type { BookingSourceType, BookingStatusType } from '../types.js'
+import { BaseModel, belongsTo, column, hasOne } from '@adonisjs/lucid/orm'
+import type { BookingSourceType, BookingStatusType, RoomTypeNameType } from '../types.js'
 import { PaginateReq } from '../paginate.js'
 import { ModelAttributes } from '@adonisjs/lucid/types/model'
 import type { UserId } from './user.js'
 import type { RoomTypeId } from './room_type.js'
 import RoomType from './room_type.js'
-import type { HasOne } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasOne } from '@adonisjs/lucid/types/relations'
+import type { RoomId } from './room.js'
 
 export default class Booking extends BaseModel {
   @column({ isPrimary: true })
@@ -17,6 +18,9 @@ export default class Booking extends BaseModel {
 
   @column()
   declare roomTypeId: RoomTypeId
+
+  @column()
+  declare roomId: RoomId
 
   @column()
   declare confirmBookingNo: string
@@ -72,8 +76,8 @@ export default class Booking extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  @hasOne(() => RoomType)
-  declare roomType: HasOne<typeof RoomType>
+  @belongsTo(() => RoomType)
+  declare roomType: BelongsTo<typeof RoomType>
 }
 
 export type BookingId = number
@@ -81,5 +85,7 @@ export type BookingId = number
 export type BookingType = ModelAttributes<InstanceType<typeof Booking>>
 export type BookingSort = Extract<keyof BookingType, 'id' | 'checkInDate'>
 export const bookingSortEnum: BookingSort[] = ['id', 'checkInDate']
-export type BookingSearch = Partial<BookingType>
+export type BookingSearch = Partial<BookingType> & {
+  roomTypeName?: RoomTypeNameType
+}
 export type BookingPaginateReq = PaginateReq<BookingSearch, BookingSort>

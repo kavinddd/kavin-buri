@@ -1,10 +1,11 @@
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { useUser } from "../user/UserProvider";
 import LoginForm, { transformSessionInfoToAuthUser } from "./LoginForm";
 import { sessionApis } from "./apis";
 import { useEffect } from "react";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const { user, setUser } = useUser();
 
   useEffect(() => {
@@ -22,7 +23,10 @@ export default function LoginPage() {
     fetchUser();
   }, [user, setUser]);
 
-  if (user) return <Navigate to="/" />;
+  if (user) {
+    navigate(-2);
+    return null;
+  }
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">

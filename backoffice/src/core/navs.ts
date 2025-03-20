@@ -18,7 +18,7 @@ const navs: NavConfig[] = [
   {
     key: "dashboard",
     label: "Dashboard",
-    url: "/",
+    url: "/dashboard",
     icon: LayoutDashboardIcon,
   },
   {
@@ -30,17 +30,25 @@ const navs: NavConfig[] = [
       {
         key: "booking-arrival",
         label: "Arrival",
-        searchParams: { status: "arrival" },
+        searchParams: {
+          checkInToday: "true",
+          status: "RESERVED",
+        },
       },
       {
         key: "booking-in-house",
         label: "In-house",
-        searchParams: { status: "inHouse" },
+        searchParams: {
+          status: "CHECKED-IN",
+        },
       },
       {
         key: "booking-departure",
         label: "Departure",
-        searchParams: { status: "departure" },
+        searchParams: {
+          checkOutToday: "true",
+          status: "CHECKED-OUT",
+        },
       },
     ],
   },

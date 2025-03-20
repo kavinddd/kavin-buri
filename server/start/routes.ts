@@ -9,9 +9,8 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
-import UsersController from '#controllers/users_controller'
-import { Session } from 'node:inspector/promises'
 
+const UsersController = () => import('#controllers/users_controller')
 const RoleGroupsController = () => import('#controllers/role_groups_controller')
 const RoomsController = () => import('#controllers/rooms_controller')
 const GuestsController = () => import('#controllers/guests_controller')
