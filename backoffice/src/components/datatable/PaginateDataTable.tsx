@@ -20,7 +20,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_PAGE_SIZE, Paginated, PaginateReq } from "@/core/paginate";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
@@ -82,7 +82,8 @@ function useQueryPaginate<
         page: page,
         size: size,
         sort: sort,
-        direction: ascending ? "asc" : "desc",
+        direction: undefined,
+        // direction: ascending ? "asc" : "desc",
         search: search,
       };
 
@@ -116,6 +117,13 @@ export default function PaginateDataTable<
   queryKey,
 }: DataTableProps<TData, TValue, Sort, Search>) {
   const [currentPage, setCurrentPage] = useState(1);
+
+  // === reset to page 1 if search is changed ===
+  // FIXME: temp solution it doubles API call
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+  // ============================================
 
   const {
     data: paginated,
