@@ -1,9 +1,10 @@
 import { inject } from '@adonisjs/core'
 import { Logger } from '@adonisjs/core/logger'
-import { Paginated } from '../paginate.js'
+import { Paginated, SortDirectionType } from '../paginate.js'
 import Room, { RoomId, RoomPaginateReq, RoomSort } from '#models/room'
 import { CreateRoomReq, UpdateRoomReq } from '#validators/room'
 import User from '#models/user'
+import RoomType from '#models/room_type'
 
 @inject()
 export class RoomsService {
@@ -11,26 +12,36 @@ export class RoomsService {
 
   private sortFields: Record<RoomSort, string> = {
     id: 'id',
+    code: 'code',
     floorNo: 'floor_no',
-    maxAdult: 'max_adult',
     updatedBy: 'updated_by',
     updatedAt: 'updated_at',
   }
 
-  private defaultSort = this.sortFields.updatedAt
+  private defaultSort = this.sortFields.code
+  private defaultSortDirection: SortDirectionType = 'asc'
 
   async listPaginate(paginateReq: RoomPaginateReq): Promise<Paginated<Room>> {
     const { page, size, sort, search, direction } = paginateReq
 
-    const query = Room.query()
+    const query = Room.query().preload('roomType')
 
     if (search) {
       if (search.id) query.where('id', '=', search.id)
+      if (search.floorNo) query.where('floor_no', '=', search.floorNo)
       if (search.code) query.where('code', 'ilike', `%${search.code}%`)
+      if (search.roomTypeName) {
+        const subQuery = RoomType.query().where('name', search.roomTypeName).select('id')
+        query.whereIn('room_type_id', subQuery)
+      }
+
       if (search.roomTypeId) query.where('room_type_id', '=', search.roomTypeId)
     }
 
-    query.orderBy(sort ? this.sortFields[sort] : this.defaultSort, direction)
+    query.orderBy(
+      sort ? this.sortFields[sort] : this.defaultSort,
+      direction || this.defaultSortDirection
+    )
 
     const paginated = await query.paginate(page ?? 1, size)
 
@@ -42,7 +53,7 @@ export class RoomsService {
   }
 
   async get(id: RoomId): Promise<Room> {
-    return Room.findOrFail(id)
+    return Room.query().preload('roomType').where('id', id).firstOrFail()
   }
 
   async create(req: CreateRoomReq, user: User): Promise<RoomId> {
@@ -54,8 +65,12 @@ export class RoomsService {
   }
 
   async update(id: RoomId, req: UpdateRoomReq, user: User): Promise<RoomId> {
+    const { roomTypeName, ...roomReq } = req
+
+    const roomType = await RoomType.findByOrFail('name', roomTypeName)
+
     const room = await Room.findOrFail(id)
-    room.merge({ ...req, updatedBy: user.id })
+    room.merge({ ...roomReq, roomTypeId: roomType.id, updatedBy: user.id })
     await room.save()
     return room.id
   }

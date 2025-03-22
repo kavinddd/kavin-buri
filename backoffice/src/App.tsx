@@ -13,6 +13,8 @@ import BookingForm from "./features/booking/BookingForm";
 import BookingCreatePage from "./features/booking/BookingCreatePage";
 import BookingShowPage from "./features/booking/BookingShowPage";
 import BookingEditPage from "./features/booking/BookingEditPage";
+import RoomShowPage from "./features/rooms/RoomShowPage";
+import RoomEditPage from "./features/rooms/RoomEditPage";
 
 function App() {
   return (
@@ -35,7 +37,11 @@ function App() {
             <Route path="create" element={<BookingCreatePage />} />
             <Route path="edit/:id" element={<BookingEditPage />} />
           </Route>
-          <Route path="room" element={<RoomPage />} />
+          <Route path="room">
+            <Route index element={<RoomPage />} />
+            <Route path="show/:id" element={<RoomShowPage />} />
+            <Route path="edit/:id" element={<RoomEditPage />} />
+          </Route>
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

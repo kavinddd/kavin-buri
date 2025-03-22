@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, belongsTo, column, hasOne } from '@adonisjs/lucid/orm'
-import type { RoomStatusType } from '../types.js'
+import type { RoomStatusType, RoomTypeNameType } from '../types.js'
 import User, { type UserId } from '#models/user'
 import type { BelongsTo, HasOne } from '@adonisjs/lucid/types/relations'
 import { ModelAttributes } from '@adonisjs/lucid/types/model'
@@ -33,14 +33,19 @@ export default class Room extends BaseModel {
   @belongsTo(() => User)
   declare updatedByUser: BelongsTo<typeof User>
 
-  @hasOne(() => RoomType)
-  declare roomType: HasOne<typeof RoomType>
+  @belongsTo(() => RoomType)
+  declare roomType: BelongsTo<typeof RoomType>
 }
 
 export type RoomId = number
 
 export type RoomModelType = ModelAttributes<InstanceType<typeof Room>>
-export type RoomSort = Extract<keyof RoomModelType, 'id' | 'updatedAt' | 'updatedBy' | 'floorNo'>
-export const roomSortEnum: RoomSort[] = ['id', 'updatedAt', 'updatedBy', 'floorNo']
-export type RoomSearch = Partial<RoomModelType>
+export type RoomSort = Extract<
+  keyof RoomModelType,
+  'id' | 'updatedAt' | 'updatedBy' | 'floorNo' | 'code'
+>
+export const roomSortEnum: RoomSort[] = ['id', 'updatedAt', 'updatedBy', 'floorNo', 'code']
+export type RoomSearch = Partial<RoomModelType> & {
+  roomTypeName?: RoomTypeNameType
+}
 export type RoomPaginateReq = PaginateReq<RoomSearch, RoomSort>

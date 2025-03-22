@@ -16,9 +16,10 @@ export const paginateRoomValidator = vine.compile(
     sort: vine.enum(roomSortEnum).optional(),
 
     // search, not common
-    name: vine.string().optional(),
-    role: vine.enum(roleNameEnum).optional(),
-    roles: vine.array(vine.enum(roleNameEnum)).optional(),
+    code: vine.string().optional(),
+    floorNo: vine.number().min(2).max(6).optional(),
+    roomTypeName: vine.enum(roomTypeNameEnum).optional(),
+    status: vine.enum(roomStatusEnum).optional(),
   })
 )
 export type PaginateRoomReq = Infer<typeof paginateRoomValidator>
