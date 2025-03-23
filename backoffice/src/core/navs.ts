@@ -4,6 +4,7 @@ import {
   LayoutDashboardIcon,
   LucideIcon,
   TicketIcon,
+  UserRoundCogIcon,
 } from "lucide-react";
 
 export interface NavConfig {

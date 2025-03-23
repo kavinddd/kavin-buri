@@ -14,9 +14,14 @@ import BookingEditPage from "./features/booking/BookingEditPage";
 import RoomShowPage from "./features/rooms/RoomShowPage";
 import RoomEditPage from "./features/rooms/RoomEditPage";
 import RoleGroupPage from "./features/roleGroups/RoleGroupPage";
+import UserPage from "./features/users/UserPage";
+import UserShowPage from "./features/users/UserShowPage";
 import RoleGroupShowPage from "./features/roleGroups/RoleGroupShowPage";
 import RoleGroupCreatePage from "./features/roleGroups/RoleGroupCreatePage";
 import RoleGroupEditPage from "./features/roleGroups/RoleGroupEditPage";
+import UserCreatePage from "./features/users/UserCreatePage";
+import UserEditPage from "./features/users/UserEditPage";
+import UserProvider from "./features/users/UserProvider";
 
 function App() {
   return (
@@ -43,6 +48,12 @@ function App() {
             <Route index element={<RoomPage />} />
             <Route path="show/:id" element={<RoomShowPage />} />
             <Route path="edit/:id" element={<RoomEditPage />} />
+          </Route>
+          <Route path="user">
+            <Route index element={<UserPage />} />
+            <Route path="show/:id" element={<UserShowPage />} />
+            <Route path="create" element={<UserCreatePage />} />
+            <Route path="edit/:id" element={<UserEditPage />} />
           </Route>
           <Route path="roleGroup">
             <Route index element={<RoleGroupPage />} />
