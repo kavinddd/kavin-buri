@@ -4,17 +4,19 @@ import DashboardPage from "./features/dashboard/DashboardPage";
 import LoginPage from "./features/login/LoginPage";
 import MainLayout from "./components/layouts/MainLayout";
 import WithUser from "./components/layouts/WithUser";
-import UserProvider from "./features/user/UserProvider";
 import { Toaster } from "./components/ui/sonner";
 import BookingPage from "./features/booking/BookingPage";
 import NotFoundPage from "./components/errors/NotFoundPage";
 import RoomPage from "./features/rooms/RoomPage";
-import BookingForm from "./features/booking/BookingForm";
 import BookingCreatePage from "./features/booking/BookingCreatePage";
 import BookingShowPage from "./features/booking/BookingShowPage";
 import BookingEditPage from "./features/booking/BookingEditPage";
 import RoomShowPage from "./features/rooms/RoomShowPage";
 import RoomEditPage from "./features/rooms/RoomEditPage";
+import RoleGroupPage from "./features/roleGroups/RoleGroupPage";
+import RoleGroupShowPage from "./features/roleGroups/RoleGroupShowPage";
+import RoleGroupCreatePage from "./features/roleGroups/RoleGroupCreatePage";
+import RoleGroupEditPage from "./features/roleGroups/RoleGroupEditPage";
 
 function App() {
   return (
@@ -41,6 +43,12 @@ function App() {
             <Route index element={<RoomPage />} />
             <Route path="show/:id" element={<RoomShowPage />} />
             <Route path="edit/:id" element={<RoomEditPage />} />
+          </Route>
+          <Route path="roleGroup">
+            <Route index element={<RoleGroupPage />} />
+            <Route path="show/:id" element={<RoleGroupShowPage />} />
+            <Route path="create" element={<RoleGroupCreatePage />} />
+            <Route path="edit/:id" element={<RoleGroupEditPage />} />
           </Route>
         </Route>
 

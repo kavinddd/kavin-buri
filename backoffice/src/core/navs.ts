@@ -1,4 +1,5 @@
 import {
+  BookUserIcon,
   DoorClosedIcon,
   LayoutDashboardIcon,
   LucideIcon,
@@ -57,6 +58,18 @@ const navs: NavConfig[] = [
     label: "Room",
     url: "/room",
     icon: DoorClosedIcon,
+  },
+  {
+    key: "roleGroup",
+    label: "Role Group",
+    url: "/roleGroup",
+    icon: UserRoundCogIcon,
+  },
+  {
+    key: "user",
+    label: "User",
+    url: "/user",
+    icon: BookUserIcon,
   },
 ];
 

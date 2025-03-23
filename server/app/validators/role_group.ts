@@ -2,6 +2,8 @@ import vine from '@vinejs/vine'
 import { Infer } from '@vinejs/vine/types'
 import { directionEnum, roleNameEnum } from '../enums.js'
 import { roleGroupSortEnum } from '#models/role_group'
+import { commaSeperatedArray } from './commons.js'
+import { RoleNameType } from '../types.js'
 
 export const paginateRoleGroupValidator = vine.compile(
   vine.object({
@@ -18,7 +20,10 @@ export const paginateRoleGroupValidator = vine.compile(
     // search, not common
     name: vine.string().optional(),
     role: vine.enum(roleNameEnum).optional(),
-    roles: vine.array(vine.enum(roleNameEnum)).optional(),
+    roles: vine
+      .string()
+      .optional()
+      .transform((val) => (val ? val.split(',').map((v) => v.trim() as RoleNameType) : [])),
   })
 )
 export type PaginateRoleGroupReq = Infer<typeof paginateRoleGroupValidator>

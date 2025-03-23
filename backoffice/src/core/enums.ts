@@ -1,7 +1,7 @@
 import type { SortDirectionType } from "./paginate.js";
-import type { ReservationType, RoleNameType } from "./types.js";
+import type { ReservationType } from "./types.js";
 
-export const roleNameEnum: RoleNameType[] = [
+export const roleNameEnum = [
   "ADMIN",
   "READ_BOOKING",
   "EDIT_BOOKING",
@@ -9,7 +9,7 @@ export const roleNameEnum: RoleNameType[] = [
   "EDIT_ROOM",
   "READ_ROLE_GROUP",
   "EDIT_ROLE_GROUP",
-];
+] as const;
 
 export const roomTypeNameEnum = [
   "SUPERIOR_TWIN",

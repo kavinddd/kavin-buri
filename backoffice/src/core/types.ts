@@ -1,22 +1,12 @@
 import {
   bookingSourceEnum,
   bookingStatusEnum,
+  roleNameEnum,
   roomStatusEnum,
   roomTypeNameEnum,
 } from "./enums";
 
-export type RoleNameType =
-  | "ADMIN"
-  | "READ_BOOKING"
-  | "EDIT_BOOKING"
-  | "READ_ROOM"
-  | "EDIT_ROOM"
-  | "READ_ROLE_GROUP"
-  | "EDIT_ROLE_GROUP"
-  | "READ_GUEST"
-  | "EDIT_GUEST"
-  | "READ_USER"
-  | "EDIT_USER";
+export type RoleNameType = (typeof roleNameEnum)[number];
 
 export type RoomTypeNameType = (typeof roomTypeNameEnum)[number];
 export type RoomStatusType = (typeof roomStatusEnum)[number];

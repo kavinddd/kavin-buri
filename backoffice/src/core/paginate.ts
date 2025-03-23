@@ -35,6 +35,7 @@ export function toQueryParams<
   if (paginateReq.size) params.set("size", paginateReq.size.toString());
 
   Object.entries(paginateReq.search).forEach(([key, val]) => {
+    if (Array.isArray(val) && val.length === 0) return;
     params.set(
       key,
       val instanceof Date ? format(val, "yyyy-MM-dd") : String(val),

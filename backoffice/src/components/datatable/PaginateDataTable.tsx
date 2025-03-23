@@ -20,7 +20,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DEFAULT_PAGE_SIZE, Paginated, PaginateReq } from "@/core/paginate";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";

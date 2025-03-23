@@ -5,6 +5,7 @@ import Role from '#models/role'
 import User, { type UserId } from '#models/user'
 import { PaginateReq } from '../paginate.js'
 import { ModelAttributes } from '@adonisjs/lucid/types/model'
+import { RoleNameType } from '../types.js'
 
 export default class RoleGroup extends BaseModel {
   @column({ isPrimary: true })
@@ -42,5 +43,7 @@ export type RoleGroupId = number
 export type RoleGroupType = ModelAttributes<InstanceType<typeof RoleGroup>>
 export type RoleGroupSort = Extract<keyof RoleGroupType, 'id' | 'updatedAt'>
 export const roleGroupSortEnum: RoleGroupSort[] = ['id', 'updatedAt']
-export type RoleGroupSearch = Partial<RoleGroupType>
+export type RoleGroupSearch = Partial<RoleGroupType> & {
+  roles: RoleNameType[]
+}
 export type RoleGroupPaginateReq = PaginateReq<RoleGroupSearch, RoleGroupSort>
