@@ -28,7 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { ChevronsUpDown, LogOutIcon, UserIcon } from "lucide-react";
-import { useUser } from "@/features/user/UserProvider";
+import { useUser } from "@/features/users/UserProvider";
 
 export default function AppSidebar() {
   const { state } = useSidebar();

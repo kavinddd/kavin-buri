@@ -1,5 +1,5 @@
 import { Navigate, useNavigate } from "react-router";
-import { useUser } from "../user/UserProvider";
+import { useUser } from "../users/UserProvider";
 import LoginForm, { transformSessionInfoToAuthUser } from "./LoginForm";
 import { sessionApis } from "./apis";
 import { useEffect } from "react";

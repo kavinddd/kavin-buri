@@ -7,7 +7,7 @@ import {
 } from "react";
 import { sessionApis } from "../login/apis";
 import { toast } from "sonner";
-import { AuthUser, User } from "../login/types";
+import { AuthUser } from "../login/types";
 
 interface UserContextValue {
   user?: AuthUser;
@@ -15,7 +15,10 @@ interface UserContextValue {
   logout: () => void;
 }
 
-const defaultUserContextValue: UserContextValue = {};
+const defaultUserContextValue: UserContextValue = {
+  setUser: () => null,
+  logout: () => null,
+};
 
 const UserContext = createContext<UserContextValue>(defaultUserContextValue);
 

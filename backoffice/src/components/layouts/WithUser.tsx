@@ -1,4 +1,4 @@
-import { useUser } from "@/features/user/UserProvider";
+import { useUser } from "@/features/users/UserProvider";
 import { ReactNode } from "react";
 import { createCookie, Navigate } from "react-router";
 

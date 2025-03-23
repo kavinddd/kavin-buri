@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
-import { useUser } from "../user/UserProvider";
+import { useUser } from "../users/UserProvider";
 import { sessionApis } from "./apis";
 import { AuthUser, SessionInfo } from "./types";
 
