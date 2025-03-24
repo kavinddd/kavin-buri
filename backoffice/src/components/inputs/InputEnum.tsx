@@ -7,13 +7,13 @@ import {
   SelectValue,
 } from "../ui/select";
 
-interface InputEnumProps {
+export type InputEnumProps = {
   value: string | undefined;
   enums: readonly string[];
   onChange: (value: string | undefined) => void;
   placeholder?: string;
   readOnly?: boolean;
-}
+};
 
 export default function InputEnum({
   value,
