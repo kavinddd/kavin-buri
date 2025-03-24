@@ -18,23 +18,24 @@ export async function fetchVoid(
           ...searchParams,
         }).toString();
 
-  try {
-    const url = `${API_URL}/${path}`;
-    const finalUrl = params ? url + `?${params}` : url;
-    const response = await fetch(finalUrl, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
+  const url = `${API_URL}/${path}`;
+  const finalUrl = params ? url + `?${params}` : url;
+  const response = await fetch(finalUrl, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
 
-    if (!response.ok) {
+  if (!response.ok) {
+    try {
+      const errorData = (await response.json()) as ErrorResp;
+      const errorMsg = errorData.errors.map((err) => err.message).join("\n");
+      throw new Error(errorMsg);
+    } catch {
       throw new Error(`Request Failed with status ${response.status}`);
     }
-  } catch (error) {
-    console.error("API Request Error: ", error);
-    throw error;
   }
 }
 
@@ -63,19 +64,20 @@ export async function fetchJson<ResponseType>(
   });
 
   if (!response.ok) {
-    if (response.status === 422) {
-      const errorData = (await response.json()) as Error422Resp;
-
-      const errorMsg = errorData.errors.map((err) => err.message).join("\n");
-
-      throw new Error(errorMsg);
+    try {
+      const errorData = await response.json();
+      if ("errors" in errorData && Array.isArray(errorData.errors)) {
+        const errorMsg = (errorData as ErrorResp).errors
+          .map((err) => err.message)
+          .join("\n");
+        throw new Error(errorMsg);
+      }
+      throw new Error(`Unexpected error format with status ${response.status}`);
+    } catch (e) {
+      throw e instanceof Error
+        ? e
+        : new Error(`Request Failed with status ${response.status}`);
     }
-
-    if (response.status === 403) {
-      throw new Error("Unauthorized access");
-    }
-
-    throw new Error(`Request Failed with status ${response.status}`);
   }
 
   const data = await response.json();
@@ -83,10 +85,10 @@ export async function fetchJson<ResponseType>(
   return data as ResponseType;
 }
 
-interface Error422Resp {
+interface ErrorResp {
   errors: {
     message: string;
-    rule: string;
-    field: string;
+    rule?: string;
+    field?: string;
   }[];
 }

@@ -1,4 +1,4 @@
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useUser } from "../users/UserProvider";
 import LoginForm, { transformSessionInfoToAuthUser } from "./LoginForm";
 import { sessionApis } from "./apis";

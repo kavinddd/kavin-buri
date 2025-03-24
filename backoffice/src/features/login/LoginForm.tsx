@@ -65,8 +65,8 @@ export default function LoginForm({
         toast.success("Login Successfully");
         navigate("/");
       })
-      .catch(() => {
-        toast.error("Login Failed");
+      .catch((err: Error) => {
+        toast.error(`Login Failed: ${err.message}`);
       });
   }
 

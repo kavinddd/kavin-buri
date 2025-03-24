@@ -3,7 +3,6 @@ import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
 import { inject } from '@adonisjs/core'
 import { Logger } from '@adonisjs/core/logger'
-import { ModelObject } from '@adonisjs/lucid/types/model'
 import Role from '#models/role'
 
 interface SessionInfo {
@@ -24,7 +23,7 @@ export default class SessionController {
     return { user: user, roles: roles }
   }
 
-  async store({ request, auth }: HttpContext): Promise<SessionInfo> {
+  async store({ request, auth, response }: HttpContext) {
     /**
      * Step 1: Get credentials from the request body
      */
@@ -35,6 +34,10 @@ export default class SessionController {
      */
 
     const user = await User.verifyCredentials(username, password)
+
+    if (!user.isActive) {
+      return response.unauthorized({ errors: [{ message: 'User is not active.' }] })
+    }
 
     await user.loadOnce('roleGroups')
     const roleGroupIds = user.roleGroups.map((it) => it.id)
