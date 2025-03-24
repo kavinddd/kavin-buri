@@ -1,5 +1,4 @@
 import vine from '@vinejs/vine'
-import type { Infer } from '@vinejs/vine/types'
 
 export const idNumberValidator = vine.compile(
   vine.object({
@@ -14,5 +13,11 @@ export const idStringValidator = vine.compile(
     params: vine.object({
       id: vine.string(),
     }),
+  })
+)
+
+export const dropdownValidator = vine.compile(
+  vine.object({
+    q: vine.string().optional(),
   })
 )

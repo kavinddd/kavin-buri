@@ -7,6 +7,7 @@ import {
   RoleGroupSearch,
   RoleGroupSort,
 } from "./types";
+import { ListDropdown } from "@/core/dropdown";
 
 const path = "roleGroups";
 
@@ -48,5 +49,17 @@ export async function fetchRoleGroups(
       method: "GET",
     },
     toQueryParams(req),
+  );
+}
+
+export async function listRoleGroupDropdown(
+  q?: string,
+): Promise<ListDropdown<RoleGroupId>> {
+  return fetchJson<ListDropdown<RoleGroupId>>(
+    `${path}/dropdown`,
+    {
+      method: "GET",
+    },
+    q ? { q } : undefined,
   );
 }

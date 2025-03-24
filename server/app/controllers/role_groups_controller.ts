@@ -11,7 +11,7 @@ import { DEFAULT_PAGINATE_REQ } from '../paginate.js'
 import { inject } from '@adonisjs/core'
 import { RoleGroupId, RoleGroupPaginateReq } from '#models/role_group'
 import { RoleGroupsService } from '#services/role_groups_service'
-import { idNumberValidator } from '#validators/commons'
+import { dropdownValidator, idNumberValidator } from '#validators/commons'
 
 @inject()
 export default class RoleGroupsController {
@@ -84,5 +84,14 @@ export default class RoleGroupsController {
 
     const { id } = params
     return this.service.delete(id as RoleGroupId)
+  }
+
+  async listDropdown({ request }: HttpContext) {
+    console.log(request.qs())
+    const { q } = await dropdownValidator.validate(request.qs())
+
+    console.log(q)
+
+    return this.service.listDropdown(q)
   }
 }

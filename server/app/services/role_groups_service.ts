@@ -1,4 +1,9 @@
-import RoleGroup, { RoleGroupId, RoleGroupPaginateReq, RoleGroupSort } from '#models/role_group'
+import RoleGroup, {
+  RoleGroupId,
+  RoleGroupPaginateReq,
+  RoleGroupSearch,
+  RoleGroupSort,
+} from '#models/role_group'
 import { inject } from '@adonisjs/core'
 import { Logger } from '@adonisjs/core/logger'
 import { Paginated } from '../paginate.js'
@@ -7,6 +12,7 @@ import { CreateRoleGroupReq, UpdateRoleGroupReq } from '#validators/role_group'
 import Role from '#models/role'
 import RoleGroupRole from '#models/role_group_role'
 import db from '@adonisjs/lucid/services/db'
+import { Dropdown, ListDropdown } from '../dropdown.js'
 
 @inject()
 export class RoleGroupsService {
@@ -109,5 +115,19 @@ export class RoleGroupsService {
   async delete(id: RoleGroupId): Promise<void> {
     const roleGroup = await RoleGroup.findOrFail(id)
     return roleGroup.delete()
+  }
+
+  async listDropdown(q?: string): Promise<ListDropdown<RoleGroupId>> {
+    const query = RoleGroup.query()
+    if (q) query.where('name', 'ilike', `%${q}%`)
+
+    const roleGroups = await query
+
+    return {
+      data: roleGroups.map((roleGroup) => ({
+        id: roleGroup.id,
+        label: roleGroup.name,
+      })),
+    }
   }
 }

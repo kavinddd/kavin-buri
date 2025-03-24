@@ -61,6 +61,7 @@ router
         router
           .group(() => {
             router.get('/', [RoleGroupsController, 'paginate']).as('paginate')
+            router.get('/dropdown', [RoleGroupsController, 'listDropdown']).as('dropdown')
             router.get('/:id', [RoleGroupsController, 'get']).as('get')
             router.post('/', [RoleGroupsController, 'create']).as('create')
             router.patch('/:id', [RoleGroupsController, 'update']).as('update')
