@@ -26,17 +26,26 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import InputNumber from "@/components/inputs/InputNumber";
-import InputEnum from "@/components/inputs/InputEnum";
 import { cleanForm } from "@/core/utils";
+import { InputEnumBoolean } from "@/components/inputs/InputEnumBoolean";
+import InputDropdownMulti from "@/components/inputs/InputDropdownMulti";
+import { listRoleGroupDropdown } from "../roleGroups/api";
 
 const searchFormSchema = z.object({
-  name: z.string().optional(),
+  fullName: z.string().optional(),
+  username: z.string().optional(),
+  isActive: z.boolean().optional(),
+  roleGroupIds: z.number().array(),
 });
 
 type SearchFormType = z.infer<typeof searchFormSchema>;
 
-const searchFormDefaultValue: SearchFormType = {};
+const searchFormDefaultValue: SearchFormType = {
+  fullName: "",
+  username: "",
+  isActive: undefined,
+  roleGroupIds: [],
+};
 
 interface Props {
   defaultSearch: userSearch;
@@ -89,10 +98,10 @@ export default function UserSearchPanel({ defaultSearch, onSubmit }: Props) {
               <CardContent className="m-0 mt-2 grid grid-cols-3 xl:grid-cols-6 gap-4">
                 <FormField
                   control={form.control}
-                  name="code"
+                  name="fullName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Code</FormLabel>
+                      <FormLabel>Full Name</FormLabel>
                       <FormControl>
                         <Input type="text" {...field} />
                       </FormControl>
@@ -103,16 +112,29 @@ export default function UserSearchPanel({ defaultSearch, onSubmit }: Props) {
 
                 <FormField
                   control={form.control}
-                  name="floorNo"
+                  name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Floor No.</FormLabel>
+                      <FormLabel>Username</FormLabel>
                       <FormControl>
-                        <InputNumber
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="roleGroupIds"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role Group</FormLabel>
+                      <FormControl>
+                        <InputDropdownMulti
+                          apis={listRoleGroupDropdown}
                           value={field.value}
                           onChange={field.onChange}
-                          min={2}
-                          max={6}
                         />
                       </FormControl>
                       <FormMessage />
@@ -122,31 +144,16 @@ export default function UserSearchPanel({ defaultSearch, onSubmit }: Props) {
 
                 <FormField
                   control={form.control}
-                  name="userTypeName"
+                  name="isActive"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>user Type</FormLabel>
-                      <InputEnum
-                        enums={userTypeNameEnum}
-                        value={field.value}
-                        onChange={field.onChange}
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <InputEnum
-                        enums={userStatusEnum}
-                        value={field.value}
-                        onChange={field.onChange}
-                      />
+                      <FormLabel>Active</FormLabel>
+                      <FormControl>
+                        <InputEnumBoolean
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

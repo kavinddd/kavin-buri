@@ -5,8 +5,9 @@ import { useState } from "react";
 import PaginateDataTable from "@/components/datatable/PaginateDataTable";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye } from "lucide-react";
+import { Edit, Eye, PlusIcon } from "lucide-react";
 import UserSearchPanel from "./UserSearchPanel";
+import { Badge } from "@/components/ui/badge";
 
 const defaultSearch: UserSearch = {};
 
@@ -41,20 +42,29 @@ export default function UserPage() {
       },
     },
     {
-      accessorKey: "code",
-      header: "Code",
+      accessorKey: "fullName",
+      header: "Full Name",
     },
     {
-      accessorKey: "status",
-      header: "Status",
+      accessorKey: "username",
+      header: "Username",
     },
     {
-      accessorKey: "floorNo",
-      header: "Floor No.",
+      accessorKey: "roleGroups",
+      header: "Role Groups",
+      cell: ({ row }) => (
+        <div className="flex gap-0.5">
+          {row.original.roleGroups.map((roleGroup) => (
+            <Badge key={roleGroup.id} variant="outline">
+              {roleGroup.name}
+            </Badge>
+          ))}
+        </div>
+      ),
     },
     {
-      accessorKey: "userType.name",
-      header: "User Type",
+      accessorKey: "isActive",
+      header: "Active",
     },
     {
       accessorKey: "updatedAt",
@@ -67,15 +77,12 @@ export default function UserPage() {
       <div className="flex flex-col gap-4">
         <UserSearchPanel onSubmit={setSearch} defaultSearch={defaultSearch} />
 
-        {
-          // <div className="text-end">
-          //   <Button onClick={() => navigate("create")}>
-          //     <PlusIcon />
-          //     Create a User
-          //   </Button>
-          // </div>
-          //
-        }
+        <div className="text-end">
+          <Button onClick={() => navigate("create")}>
+            <PlusIcon />
+            Create a User
+          </Button>
+        </div>
 
         <PaginateDataTable
           queryKey="users"

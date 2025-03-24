@@ -30,10 +30,10 @@ export default function UserProvider({ children }: { children: ReactNode }) {
       .logout()
       .then(() => {
         setUser(undefined);
-        toast("Logout successfully");
+        toast.success("Logout successfully");
       })
       .catch((e) => {
-        toast(e.message);
+        toast.error(e.message);
       });
   }, []);
 

@@ -89,6 +89,7 @@ export default class extends BaseSeeder {
           fullName: 'admin',
           username: 'admin',
           password: 'admin',
+          isActive: true,
         },
         { client: trx }
       )
@@ -98,6 +99,7 @@ export default class extends BaseSeeder {
           fullName: 'frontOffice',
           username: 'frontOffice',
           password: 'frontOffice',
+          isActive: true,
         },
         { client: trx }
       )

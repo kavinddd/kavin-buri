@@ -18,14 +18,10 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import InputNumber from "@/components/inputs/InputNumber";
-import InputEnum from "@/components/inputs/InputEnum";
-import InputDate from "@/components/inputs/InputDate";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { useEffect, useMemo } from "react";
 
-import { addDays } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { CircleAlertIcon } from "lucide-react";
 import { toast } from "sonner";
@@ -33,20 +29,8 @@ import { DEFAULT_REACT_QUERY_STALE_TIME } from "@/core/constants";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "./api";
 import { Checkbox } from "@/components/ui/checkbox";
-
-const userFormSchema = z.object({
-  code: z.string().trim().nonempty(),
-  status: z.string().trim().nonempty(),
-  floorNo: z.number().min(2).max(6),
-});
-
-type UserFormType = z.infer<typeof userFormSchema>;
-
-const userFormDefaultValue: UserFormType = {
-  code: "",
-  status: "",
-  floorNo: 2,
-};
+import InputDropdownMulti from "@/components/inputs/InputDropdownMulti";
+import { listRoleGroupDropdown } from "../roleGroups/api";
 
 interface FormProps {
   mode: FormMode;
@@ -57,6 +41,44 @@ interface FormProps {
 
 export default function UserForm({ mode, id, onSubmit, error }: FormProps) {
   const navigate = useNavigate();
+
+  const userFormSchema = useMemo(
+    () =>
+      z
+        .object({
+          fullName: z.string().trim().nonempty(),
+          username: z.string().trim().nonempty(),
+          password:
+            mode === "EDIT" ? z.string().trim() : z.string().trim().nonempty(),
+          confirmPassword:
+            mode === "EDIT" ? z.string().trim() : z.string().trim().nonempty(),
+          roleGroupIds: z.number().array(),
+          isActive: z.boolean(),
+        })
+        .refine(
+          (data) =>
+            !data.confirmPassword || data.password === data.confirmPassword,
+          {
+            message: "Passwords must match",
+            path: ["confirmPassword"],
+          },
+        ),
+    [mode],
+  );
+
+  type UserFormType = z.infer<typeof userFormSchema>;
+
+  const userFormDefaultValue: UserFormType = useMemo(
+    () => ({
+      fullName: "",
+      username: "",
+      password: "",
+      confirmPassword: "",
+      roleGroupIds: [],
+      isActive: false,
+    }),
+    [],
+  );
 
   const {
     data: user,
@@ -76,8 +98,9 @@ export default function UserForm({ mode, id, onSubmit, error }: FormProps) {
     return {
       ...userFormDefaultValue,
       ...user,
+      roleGroupIds: user?.roleGroups.map((roleGroup) => roleGroup.id) || [],
     };
-  }, [user]);
+  }, [user, userFormDefaultValue]);
 
   const form = useForm<UserFormType>({
     resolver: zodResolver(userFormSchema),
@@ -93,7 +116,15 @@ export default function UserForm({ mode, id, onSubmit, error }: FormProps) {
   }
 
   function onValidSubmit(formData: UserFormType) {
-    onSubmit?.(formData as UserSaveReq);
+    const req: UserSaveReq = {
+      fullName: formData.fullName,
+      username: formData.username,
+      password: formData.password,
+      isActive: formData.isActive,
+
+      roleGroupIds: formData.roleGroupIds,
+    };
+    onSubmit?.(req);
   }
 
   const isReadOnly = mode === "SHOW";
@@ -101,28 +132,85 @@ export default function UserForm({ mode, id, onSubmit, error }: FormProps) {
   return (
     <>
       <Card>
-        {error && (
+        {(error || mode === "EDIT") && (
           <CardHeader className="bg-red-200 text-red-500 text-sm flex flex-row items-center gap-x-10">
-            <div className="">
-              <CircleAlertIcon size={36} />
-            </div>
-            <div className="flex-1">
-              {error.message.split("\n").map((err) => (
-                <p key={err}>{`- ${err}`}</p>
-              ))}
-            </div>
+            {error && (
+              <>
+                <div>
+                  <CircleAlertIcon size={36} />
+                </div>
+                <div className="flex-1">
+                  {error.message.split("\n").map((err) => (
+                    <p key={err}>{`- ${err}`}</p>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {mode === "EDIT" && (
+              <p>
+                {
+                  "การอัพเดทไม่จำเป็นต้องกรอก  Password ถ้าไม่ต้องการแก้ไข Password"
+                }
+              </p>
+            )}
           </CardHeader>
         )}
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onValidSubmit)}>
             <CardContent className="p-8 grid grid-cols-3 grid-rows-4 gap-y-4 gap-x-4">
               <FormField
                 control={form.control}
-                name="status"
+                name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Status</FormLabel>
-
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        value={field.value}
+                        onChange={field.onChange}
+                        readOnly={isReadOnly}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        value={field.value}
+                        onChange={field.onChange}
+                        readOnly={isReadOnly}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <span />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        value={field.value}
+                        onChange={field.onChange}
+                        readOnly={isReadOnly}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -130,49 +218,70 @@ export default function UserForm({ mode, id, onSubmit, error }: FormProps) {
 
               <FormField
                 control={form.control}
-                name="code"
+                name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Code</FormLabel>
-                    <Input
-                      value={field.value}
-                      onChange={field.onChange}
-                      readOnly={true}
-                    />
-
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        value={field.value}
+                        onChange={field.onChange}
+                        readOnly={isReadOnly}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              <span />
 
               <FormField
                 control={form.control}
-                name="floorNo"
+                name="isActive"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Floor No.</FormLabel>
-                    <InputNumber
-                      value={field.value}
-                      onChange={field.onChange}
-                      readOnly={true}
-                    />
-
+                    <div className="flex gap-2 items-center">
+                      <FormLabel>Active</FormLabel>
+                      <FormControl>
+                        <Checkbox
+                          className="h-6 w-6"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          disabled={isReadOnly}
+                        />
+                      </FormControl>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="userTypeName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>User Type </FormLabel>
+              <span />
+              <span />
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="col-span-3">
+                <FormField
+                  control={form.control}
+                  name="roleGroupIds"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role Groups</FormLabel>
+                      <FormControl>
+                        <InputDropdownMulti
+                          value={field.value}
+                          onChange={field.onChange}
+                          apis={listRoleGroupDropdown}
+                          maxCount={5}
+                          readOnly={isReadOnly}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </CardContent>
 
             <Separator className="my-4" />

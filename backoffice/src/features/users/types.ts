@@ -3,10 +3,11 @@ import { RoleGroup, RoleGroupId } from "../roleGroups/types";
 
 export interface User {
   id: UserId;
-  fullName: string | null;
+  fullName: string;
   username: string;
+  isActive: boolean;
   createdAt: Date;
-  updatedAt: Date | null;
+  updatedAt: Date;
   createdBy: UserId;
   updatedBy: UserId;
   roleGroups: RoleGroup[];
@@ -22,7 +23,8 @@ export interface UserSaveReq {
   fullName: string;
   username: string;
   password: string;
-  roleGroupId: RoleGroupId[];
+  roleGroupIds: RoleGroupId[];
+  isActive: boolean;
 }
 
 export type UserUpdateReq = Partial<UserSaveReq>;

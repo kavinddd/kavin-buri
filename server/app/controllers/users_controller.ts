@@ -74,7 +74,7 @@ export default class UsersController {
 
     const req: UpdateUserReq = await request.validateUsing(updateUserValidator)
 
-    return this.service.update(id, req, auth.user!)
+    return this.service.update(id, req, auth.user!, auth)
   }
 
   async delete({ params, bouncer, response }: HttpContext) {

@@ -4,7 +4,7 @@ import { compose } from '@adonisjs/core/helpers'
 import { BaseModel, column, hasManyThrough, manyToMany } from '@adonisjs/lucid/orm'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import type { HasManyThrough, ManyToMany } from '@adonisjs/lucid/types/relations'
-import RoleGroup from '#models/role_group'
+import RoleGroup, { RoleGroupId } from '#models/role_group'
 import Role from '#models/role'
 import { ModelAttributes } from '@adonisjs/lucid/types/model'
 import { PaginateReq } from '../paginate.js'
@@ -26,6 +26,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @column({ serializeAs: null })
   declare password: string
+
+  @column()
+  declare isActive: Boolean
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -53,5 +56,7 @@ export type UserId = number
 export type UserType = ModelAttributes<User>
 export type UserSort = Extract<keyof UserType, 'id' | 'fullName' | 'username' | 'updatedAt'>
 export const userSortEnum: UserSort[] = ['id', 'fullName', 'username']
-export type UserSearch = Partial<UserType>
+export type UserSearch = Partial<UserType> & {
+  roleGroupIds: RoleGroupId[]
+}
 export type UserPaginateReq = PaginateReq<UserSearch, UserSort>
