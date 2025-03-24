@@ -3,6 +3,7 @@ import {
   DoorClosedIcon,
   LayoutDashboardIcon,
   LucideIcon,
+  TentTreeIcon,
   TicketIcon,
   UserRoundCogIcon,
 } from "lucide-react";
@@ -59,6 +60,12 @@ const navs: NavConfig[] = [
     label: "Room",
     url: "/room",
     icon: DoorClosedIcon,
+  },
+  {
+    key: "guest",
+    label: "Guest",
+    url: "/guest",
+    icon: TentTreeIcon,
   },
   {
     key: "roleGroup",

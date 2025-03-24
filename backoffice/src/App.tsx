@@ -22,6 +22,10 @@ import RoleGroupEditPage from "./features/roleGroups/RoleGroupEditPage";
 import UserCreatePage from "./features/users/UserCreatePage";
 import UserEditPage from "./features/users/UserEditPage";
 import UserProvider from "./features/users/UserProvider";
+import GuestPage from "./features/guests/GuestPage";
+import GuestCreatePage from "./features/guests/GuestCreatePage";
+import GuestEditPage from "./features/guests/GuestEditPage";
+import GuestShowPage from "./features/guests/GuestShowPage";
 
 function App() {
   return (
@@ -60,6 +64,12 @@ function App() {
             <Route path="show/:id" element={<RoleGroupShowPage />} />
             <Route path="create" element={<RoleGroupCreatePage />} />
             <Route path="edit/:id" element={<RoleGroupEditPage />} />
+          </Route>
+          <Route path="guest">
+            <Route index element={<GuestPage />} />
+            <Route path="show/:id" element={<GuestShowPage />} />
+            <Route path="create" element={<GuestCreatePage />} />
+            <Route path="edit/:id" element={<GuestEditPage />} />
           </Route>
         </Route>
 

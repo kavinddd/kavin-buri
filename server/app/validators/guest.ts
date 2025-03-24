@@ -1,7 +1,6 @@
 import vine from '@vinejs/vine'
 import { Infer } from '@vinejs/vine/types'
-import { directionEnum, roleNameEnum, roomStatusEnum, roomTypeNameEnum } from '../enums.js'
-import { roomSortEnum } from '#models/room'
+import { directionEnum } from '../enums.js'
 import { DateTime } from 'luxon'
 import { guestSortEnum } from '#models/guest'
 
@@ -36,7 +35,7 @@ export const createGuestValidator = vine.compile(
     firstName: vine.string(),
     lastName: vine.string(),
     nationality: vine.string(),
-    dateOfBirth: vine.date().transform((date) => DateTime.fromJSDate(date)),
+    dateOfBirth: vine.date({ formats: ['iso8601'] }).transform((date) => DateTime.fromJSDate(date)),
   })
 )
 export type CreateGuestReq = Infer<typeof createGuestValidator>
@@ -48,7 +47,7 @@ export const updateGuestValidator = vine.compile(
     lastNamme: vine.string().optional(),
     nationality: vine.string().optional(),
     dateOfBirth: vine
-      .date()
+      .date({ formats: ['iso8601'] })
       .transform((date) => DateTime.fromJSDate(date))
       .optional(),
   })
