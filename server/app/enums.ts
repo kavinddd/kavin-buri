@@ -16,6 +16,8 @@ export const roleNameEnum: RoleNameType[] = [
   'EDIT_ROOM',
   'READ_ROLE_GROUP',
   'EDIT_ROLE_GROUP',
+  'READ_PRICING',
+  'EDIT_PRICING',
 ]
 
 export const roomTypeNameEnum: RoomTypeNameType[] = [

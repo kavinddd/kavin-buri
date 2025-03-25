@@ -9,6 +9,8 @@ export const roleNameEnum = [
   "EDIT_ROOM",
   "READ_ROLE_GROUP",
   "EDIT_ROLE_GROUP",
+  "READ_PRICING",
+  "EDIT_PRICING",
 ] as const;
 
 export const roomTypeNameEnum = [

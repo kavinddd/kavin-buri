@@ -10,6 +10,8 @@ export type RoleNameType =
   | 'EDIT_GUEST'
   | 'READ_USER'
   | 'EDIT_USER'
+  | 'READ_PRICING'
+  | 'EDIT_PRICING'
 
 export type RoomTypeNameType = 'SUPERIOR_TWIN' | 'SUPERIOR_DOUBLE' | 'DELUXE' | 'SUITE'
 

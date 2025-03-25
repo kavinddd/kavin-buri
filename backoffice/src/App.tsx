@@ -26,6 +26,7 @@ import GuestPage from "./features/guests/GuestPage";
 import GuestCreatePage from "./features/guests/GuestCreatePage";
 import GuestEditPage from "./features/guests/GuestEditPage";
 import GuestShowPage from "./features/guests/GuestShowPage";
+import PricingPage from "./features/pricing/PricingPage";
 
 function App() {
   return (
@@ -70,6 +71,9 @@ function App() {
             <Route path="show/:id" element={<GuestShowPage />} />
             <Route path="create" element={<GuestCreatePage />} />
             <Route path="edit/:id" element={<GuestEditPage />} />
+          </Route>
+          <Route path="pricing">
+            <Route index element={<PricingPage />} />
           </Route>
         </Route>
 

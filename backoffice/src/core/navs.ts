@@ -1,4 +1,5 @@
 import {
+  BadgeDollarSignIcon,
   BookUserIcon,
   DoorClosedIcon,
   LayoutDashboardIcon,
@@ -66,6 +67,12 @@ const navs: NavConfig[] = [
     label: "Guest",
     url: "/guest",
     icon: TentTreeIcon,
+  },
+  {
+    key: "pricing",
+    label: "Pricing",
+    url: "/pricing",
+    icon: BadgeDollarSignIcon,
   },
   {
     key: "roleGroup",

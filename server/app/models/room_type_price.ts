@@ -6,6 +6,8 @@ import type { UserId } from './user.js'
 import type { RoomTypeId } from './room_type.js'
 
 export default class RoomTypePrice extends BaseModel {
+  static table = 'room_type_price'
+
   @column({ isPrimary: true })
   declare id: RoomTypePriceId
 

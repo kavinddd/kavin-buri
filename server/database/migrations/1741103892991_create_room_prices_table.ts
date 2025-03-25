@@ -5,16 +5,14 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
+      table.increments('id')
       table.integer('room_type_id').unsigned().references('id').inTable('room_types')
       table.date('date')
-      table.primary(['room_type_id', 'date']) // Composite primary key
 
       table.integer('price').unsigned().notNullable()
 
       table.timestamp('created_at').notNullable()
       table.integer('created_by').unsigned().references('id').inTable('users')
-      table.timestamp('updated_at').notNullable()
-      table.integer('updated_by').unsigned().references('id').inTable('users')
     })
   }
 

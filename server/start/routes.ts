@@ -9,6 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
+import PricingsController from '#controllers/pricings_controller'
 
 const UsersController = () => import('#controllers/users_controller')
 const RoleGroupsController = () => import('#controllers/role_groups_controller')
@@ -57,19 +58,6 @@ router
           .prefix('/sessions')
           .as('sessions')
 
-        // roleGroups
-        router
-          .group(() => {
-            router.get('/', [RoleGroupsController, 'paginate']).as('paginate')
-            router.get('/dropdown', [RoleGroupsController, 'listDropdown']).as('dropdown')
-            router.get('/:id', [RoleGroupsController, 'get']).as('get')
-            router.post('/', [RoleGroupsController, 'create']).as('create')
-            router.patch('/:id', [RoleGroupsController, 'update']).as('update')
-            router.delete('/:id', [RoleGroupsController, 'delete']).as('delete')
-          })
-          .prefix('/roleGroups')
-          .as('roleGroups')
-
         // bookings
         router
           .group(() => {
@@ -94,7 +82,7 @@ router
           .prefix('/rooms')
           .as('rooms')
 
-        // rooms
+        // guests
         router
           .group(() => {
             router.get('/', [GuestsController, 'paginate']).as('paginate')
@@ -105,6 +93,28 @@ router
           })
           .prefix('/guests')
           .as('guests')
+
+        // pricing
+        router
+          .group(() => {
+            router.get('/', [PricingsController, 'get']).as('get')
+            router.post('/', [PricingsController, 'create']).as('create')
+          })
+          .prefix('/pricings')
+          .as('pricings')
+
+        // roleGroups
+        router
+          .group(() => {
+            router.get('/', [RoleGroupsController, 'paginate']).as('paginate')
+            router.get('/dropdown', [RoleGroupsController, 'listDropdown']).as('dropdown')
+            router.get('/:id', [RoleGroupsController, 'get']).as('get')
+            router.post('/', [RoleGroupsController, 'create']).as('create')
+            router.patch('/:id', [RoleGroupsController, 'update']).as('update')
+            router.delete('/:id', [RoleGroupsController, 'delete']).as('delete')
+          })
+          .prefix('/roleGroups')
+          .as('roleGroups')
 
         // users
         router

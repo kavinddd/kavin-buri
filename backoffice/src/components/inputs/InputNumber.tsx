@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { FormControl } from "../ui/form";
 import { Input } from "../ui/input";
 
@@ -19,24 +20,29 @@ export default function InputNumber({
     <FormControl>
       <Input
         type="text"
+        className={cn(readOnly && "cursor-auto")}
         value={value ?? ""}
-        onChange={(e) => {
-          const value = e.target.value;
+        onChange={
+          readOnly
+            ? undefined
+            : (e) => {
+                const value = e.target.value;
 
-          if (value === "") {
-            onChange(undefined);
-            return;
-          }
+                if (value === "") {
+                  onChange(undefined);
+                  return;
+                }
 
-          const numValue = Number(value);
+                const numValue = Number(value);
 
-          if (isNaN(numValue)) {
-            onChange(undefined);
-            return;
-          }
+                if (isNaN(numValue)) {
+                  onChange(undefined);
+                  return;
+                }
 
-          onChange(value === "" ? undefined : Number(value));
-        }}
+                onChange(value === "" ? undefined : Number(value));
+              }
+        }
         min={min}
         max={max}
         readOnly={readOnly}
