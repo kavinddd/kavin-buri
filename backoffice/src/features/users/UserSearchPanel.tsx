@@ -74,10 +74,10 @@ export default function UserSearchPanel({ defaultSearch, onSubmit }: Props) {
     [onSubmit],
   );
 
-  useEffect(() => {
-    form.reset(defaultValues);
-    onValidSubmit(defaultValues as userSearch);
-  }, [form, onValidSubmit, defaultValues]);
+  // useEffect(() => {
+  //   form.reset(defaultValues);
+  //   onValidSubmit(defaultValues as userSearch);
+  // }, [form, onValidSubmit, defaultValues]);
 
   return (
     <Card>
