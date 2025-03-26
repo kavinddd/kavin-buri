@@ -5,7 +5,14 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
-import { format, isValid, parse, startOfMonth } from "date-fns";
+import {
+  format,
+  isFuture,
+  isPast,
+  isValid,
+  parse,
+  startOfMonth,
+} from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { FormControl } from "@/components/ui/form";
@@ -16,11 +23,15 @@ type InputDateProps = {
   value: Date | undefined;
   onChange: (value: Date | undefined) => void;
   readOnly?: boolean;
+  disablePast?: boolean;
+  disableFuture?: boolean;
 };
 export default function InputDate({
   value,
   onChange,
   readOnly,
+  disablePast = false,
+  disableFuture = false,
 }: InputDateProps) {
   const [inputValue, setInputValue] = useState<string>(
     value ? format(value, "yyyy-MM-dd") : "",
@@ -100,7 +111,10 @@ export default function InputDate({
           onSelect={handleCalendarSelect}
           defaultMonth={value ? startOfMonth(value) : undefined}
           disabled={(date) =>
-            readOnly || date > new Date() || date < new Date("1900-01-01")
+            date < new Date("1900-01-01") ||
+            readOnly ||
+            (disableFuture && isFuture(date)) ||
+            (disablePast && isPast(date))
           }
           initialFocus
         />
