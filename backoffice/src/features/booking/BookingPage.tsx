@@ -1,13 +1,22 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Booking, BookingSearch } from "./types";
-import { fetchBookings } from "./api";
-import { memo, useMemo, useState } from "react";
+import { Booking, BookingId, BookingSearch } from "./types";
+import { checkOut, fetchBookings } from "./api";
+import { useMemo, useState } from "react";
 import PaginateDataTable from "@/components/datatable/PaginateDataTable";
 import { useNavigate } from "react-router";
 import BookingSearchPanel from "./BookingSearchPanel";
 import useDefaultSearchParams from "@/hooks/useDefaultSearchParams";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye, PlusIcon } from "lucide-react";
+import {
+  ArrowDownFromLineIcon,
+  ArrowUpFromLineIcon,
+  Edit,
+  Eye,
+  PlusIcon,
+} from "lucide-react";
+import { isToday } from "date-fns";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 type CustomSearch = {
   checkInToday: boolean;
@@ -23,6 +32,8 @@ const acceptedSearchParams: SearchParams = {
 };
 
 export default function BookingPage() {
+  const queryClient = useQueryClient();
+
   const { defaultSearch } =
     useDefaultSearchParams<SearchParams>(acceptedSearchParams);
 
@@ -43,6 +54,19 @@ export default function BookingPage() {
 
   const navigate = useNavigate();
 
+  const mutation = useMutation<BookingId, Error, BookingId>({
+    mutationFn: checkOut,
+    onSuccess: () => {
+      toast.success("Booking is succesfully check-out");
+      queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      // navigate(`/booking/show/${bookingId}`);
+    },
+    onError: (error) => {
+      console.error("Error while trying to checkout booking:", error.message);
+      toast.error(error.message);
+    },
+  });
+
   const columns: ColumnDef<Booking>[] = [
     {
       id: "actions", // Unique ID since there's no accessorKey
@@ -62,11 +86,33 @@ export default function BookingPage() {
               variant="ghost"
               onClick={() => navigate(`/booking/edit/${booking.id}`)}
             >
-              <Edit className="h-6 w-6 " />
+              <Edit className="h-6 w-6" />
             </Button>
+            {booking.status === "RESERVED" && isToday(booking.checkInDate) && (
+              <Button
+                variant="ghost"
+                onClick={() => navigate(`/booking/checkIn/${booking.id}`)}
+              >
+                <ArrowDownFromLineIcon className="h-6 w-6" />
+              </Button>
+            )}
+            {booking.status === "CHECKED-IN" && (
+              // isToday(booking.checkOutDate) &&
+
+              <Button
+                variant="ghost"
+                onClick={() => mutation.mutate(booking.id)}
+              >
+                <ArrowUpFromLineIcon className="h-6 w-6" />
+              </Button>
+            )}
           </div>
         );
       },
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
     },
     {
       accessorKey: "source",

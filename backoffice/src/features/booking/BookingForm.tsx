@@ -9,7 +9,6 @@ import {
 import {
   bookingSourceEnum,
   bookingStatusEnum,
-  roomStatusEnum,
   roomTypeNameEnum,
 } from "@/core/enums";
 import { FormMode } from "@/core/types";
@@ -39,29 +38,44 @@ import { DEFAULT_REACT_QUERY_STALE_TIME } from "@/core/constants";
 import { useQuery } from "@tanstack/react-query";
 import { getBooking } from "./api";
 import { Checkbox } from "@/components/ui/checkbox";
+import GuestListFormTable from "./GuestListFormTable";
 
-const bookingFormSchema = z.object({
-  roomTypeName: z.enum(roomTypeNameEnum),
+const bookingFormSchema = z
+  .object({
+    roomTypeName: z.enum(roomTypeNameEnum),
 
-  email: z.string().trim().nonempty(),
-  contactName: z.string().trim().nonempty(),
-  contactNumber: z.string().trim().nonempty(),
+    email: z.string().trim().nonempty(),
+    contactName: z.string().trim().nonempty(),
+    contactNumber: z.string().trim().nonempty(),
 
-  checkInDate: z.date(),
-  checkOutDate: z.date(),
+    checkInDate: z.date(),
+    checkOutDate: z.date(),
 
-  source: z.enum(bookingSourceEnum),
-  status: z.enum(bookingStatusEnum),
+    source: z.enum(bookingSourceEnum),
+    status: z.enum(bookingStatusEnum),
 
-  roomPrice: z.number().positive(),
-  numAdult: z.number().positive(),
-  numChildren: z.number().min(0),
+    roomPrice: z.number().positive(),
+    numAdult: z.number().positive(),
+    numChildren: z.number().min(0),
 
-  hasAbf: z.boolean(),
-  hasTransportation: z.boolean(),
-});
+    hasAbf: z.boolean(),
+    hasTransportation: z.boolean(),
 
-type BookingFormType = z.infer<typeof bookingFormSchema>;
+    guests: z
+      .object({
+        citizenId: z.string().trim().nonempty(),
+        firstName: z.string().trim().nonempty(),
+        lastName: z.string().trim().nonempty(),
+        nationality: z.string().trim().nonempty(),
+        dateOfBirth: z.date(),
+      })
+      .array(),
+  })
+  .refine((data) => data.checkOutDate > data.checkInDate, {
+    message: "Check-out date must be after check-in date",
+    path: ["checkOutDate"], // Point the error to the checkOutDate field
+  });
+export type BookingFormType = z.infer<typeof bookingFormSchema>;
 
 const bookingFormDefaultValue: BookingFormType = {
   roomTypeName: "SUPERIOR_TWIN",
@@ -79,6 +93,8 @@ const bookingFormDefaultValue: BookingFormType = {
   roomPrice: 2000,
   hasAbf: false,
   hasTransportation: false,
+
+  guests: [],
 };
 
 interface FormProps {
@@ -86,33 +102,24 @@ interface FormProps {
   id?: BookingId;
   onSubmit?: (req: BookingSaveReq) => void;
   error?: Error;
+  isLoading?: boolean;
+  showGuests?: boolean;
 }
 
-// function mapBookingToFormData(booking: Booking): BookingFormType{
-//
-//   return {
-//   roomTypeName: booking.roomType,
-//   email: booking.email,
-//   contactName: booking.contactName,
-//   checkInDate: booking.checkInDate,
-//   checkOutDate: booking.checkOutDate,
-//   source: booking.source,
-//   numChildren: 0,
-//   numAdult: 1,
-//   roomPrice: 2000,
-//   }
-//
-// }
-//
-// function mapFormDataToSaveReq() {}
-
-export default function BookingForm({ mode, id, onSubmit, error }: FormProps) {
+export default function BookingForm({
+  mode,
+  id,
+  onSubmit,
+  error,
+  isLoading = false,
+  showGuests = false,
+}: FormProps) {
   const navigate = useNavigate();
 
   const {
     data: booking,
     isError,
-    isLoading,
+    isFetching,
     error: fetchError,
   } = useQuery<Booking, Error>({
     queryKey: ["bookings", id],
@@ -124,6 +131,11 @@ export default function BookingForm({ mode, id, onSubmit, error }: FormProps) {
   });
 
   const defaultValues: BookingFormType = useMemo(() => {
+    const guests =
+      booking?.guests?.map((guest) => ({
+        ...guest,
+        dateOfBirth: new Date(guest.dateOfBirth),
+      })) || [];
     return {
       ...bookingFormDefaultValue,
       ...booking,
@@ -136,6 +148,7 @@ export default function BookingForm({ mode, id, onSubmit, error }: FormProps) {
       checkOutDate: booking
         ? new Date(booking?.checkOutDate)
         : bookingFormDefaultValue.checkOutDate,
+      guests: guests,
     };
   }, [booking]);
 
@@ -153,10 +166,16 @@ export default function BookingForm({ mode, id, onSubmit, error }: FormProps) {
   }
 
   function onValidSubmit(formData: BookingFormType) {
-    onSubmit?.(formData as BookingSaveReq);
+    const req: BookingSaveReq = {
+      ...formData,
+    };
+    onSubmit?.(req);
   }
 
   const isReadOnly = mode === "SHOW";
+
+  const [numAdults, numChildrens] = form.watch(["numAdult", "numChildren"]);
+  const maxGuests = numAdults + numChildrens;
 
   return (
     <>
@@ -175,225 +194,253 @@ export default function BookingForm({ mode, id, onSubmit, error }: FormProps) {
         )}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onValidSubmit)}>
-            <CardContent className="p-8 grid grid-cols-3 grid-rows-4 gap-y-4 gap-x-4">
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Status</FormLabel>
-                    <InputEnum
-                      value={field.value}
-                      enums={bookingStatusEnum}
-                      onChange={field.onChange}
-                      readOnly={true}
-                    />
+            <CardContent className="p-8 ">
+              <div className="grid grid-cols-3 grid-rows-4 gap-y-4 gap-x-4">
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <InputEnum
+                        value={field.value}
+                        enums={bookingStatusEnum}
+                        onChange={field.onChange}
+                        readOnly={true}
+                      />
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="source"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Source</FormLabel>
-                    <InputEnum
-                      value={field.value}
-                      enums={bookingSourceEnum}
-                      onChange={field.onChange}
-                      readOnly={isReadOnly}
-                    />
+                <FormField
+                  control={form.control}
+                  name="source"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Source</FormLabel>
+                      <InputEnum
+                        value={field.value}
+                        enums={bookingSourceEnum}
+                        onChange={field.onChange}
+                        readOnly={isReadOnly || isFetching || isLoading}
+                      />
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="roomTypeName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Room Type</FormLabel>
-                    <InputEnum
-                      value={field.value ?? ""}
-                      enums={roomTypeNameEnum}
-                      onChange={field.onChange}
-                      readOnly={isReadOnly}
-                    />
+                <FormField
+                  control={form.control}
+                  name="roomTypeName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Room Type</FormLabel>
+                      <InputEnum
+                        value={field.value ?? ""}
+                        enums={roomTypeNameEnum}
+                        onChange={field.onChange}
+                        readOnly={isReadOnly || isFetching || isLoading}
+                      />
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="checkInDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Check-in Date</FormLabel>
-                    <InputDate
-                      onChange={field.onChange}
-                      value={field.value}
-                      readOnly={isReadOnly}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="checkOutDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Check-out Date</FormLabel>
-                    <InputDate
-                      onChange={field.onChange}
-                      value={field.value}
-                      readOnly={isReadOnly}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="roomPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Room Price</FormLabel>
-                    <InputNumber
-                      onChange={field.onChange}
-                      value={field.value}
-                      readOnly={isReadOnly}
-                      min={0}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="contactName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contact Name</FormLabel>
-                    <FormControl>
-                      <Input type="text" readOnly={isReadOnly} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="contactNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contact Number</FormLabel>
-                    <FormControl>
-                      <Input type="text" readOnly={isReadOnly} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" readOnly={isReadOnly} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="numAdult"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel># Adult</FormLabel>
-                    <InputNumber
-                      onChange={field.onChange}
-                      value={field.value}
-                      readOnly={isReadOnly}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="numChildren"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel># Children</FormLabel>
-                    <InputNumber
-                      onChange={field.onChange}
-                      value={field.value}
-                      readOnly={isReadOnly}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <span />
-
-              <FormField
-                control={form.control}
-                name="hasAbf"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex mt-4 gap-2 items-center">
-                      <FormLabel>Incl. ABF</FormLabel>
-                      <Checkbox
-                        className="h-6 w-6"
-                        checked={field.value}
-                        onCheckedChange={
-                          isReadOnly ? undefined : field.onChange
-                        }
+                <FormField
+                  control={form.control}
+                  name="checkInDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Check-in Date</FormLabel>
+                      <InputDate
+                        onChange={field.onChange}
+                        value={field.value}
+                        readOnly={isReadOnly || isFetching || isLoading}
                       />
                       <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="hasTransportation"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex mt-4 gap-2 items-center">
-                      <FormLabel>Incl. Transportation</FormLabel>
-                      <Checkbox
-                        className="h-6 w-6"
-                        checked={field.value}
-                        onCheckedChange={
-                          isReadOnly ? undefined : field.onChange
-                        }
+                <FormField
+                  control={form.control}
+                  name="checkOutDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Check-out Date</FormLabel>
+                      <InputDate
+                        onChange={field.onChange}
+                        value={field.value}
+                        readOnly={isReadOnly || isFetching || isLoading}
                       />
                       <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="roomPrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Room Price</FormLabel>
+                      <InputNumber
+                        onChange={field.onChange}
+                        value={field.value}
+                        readOnly={isReadOnly || isFetching || isLoading}
+                        min={0}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="contactName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          readOnly={isReadOnly || isFetching || isLoading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="contactNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact Number</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          readOnly={isReadOnly || isFetching || isLoading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          readOnly={isReadOnly || isFetching || isLoading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="numAdult"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel># Adult</FormLabel>
+                      <InputNumber
+                        onChange={field.onChange}
+                        value={field.value}
+                        readOnly={isReadOnly || isFetching || isLoading}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="numChildren"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel># Children</FormLabel>
+                      <InputNumber
+                        onChange={field.onChange}
+                        value={field.value}
+                        readOnly={isReadOnly || isFetching || isLoading}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <span />
+
+                <FormField
+                  control={form.control}
+                  name="hasAbf"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex mt-4 gap-2 items-center">
+                        <FormLabel>Incl. ABF</FormLabel>
+                        <Checkbox
+                          className="h-6 w-6"
+                          checked={field.value}
+                          onCheckedChange={
+                            isReadOnly ? undefined : field.onChange
+                          }
+                          disabled={isReadOnly || isFetching || isLoading}
+                        />
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="hasTransportation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex mt-4 gap-2 items-center">
+                        <FormLabel>Incl. Transportation</FormLabel>
+                        <Checkbox
+                          className="h-6 w-6"
+                          checked={field.value}
+                          onCheckedChange={
+                            isReadOnly ? undefined : field.onChange
+                          }
+                          disabled={isReadOnly || isFetching || isLoading}
+                        />
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {showGuests && (
+                <>
+                  <Separator className="my-8 w-80 mx-auto" />
+                  <p className="text-primary">Guests</p>
+                  <GuestListFormTable
+                    form={form}
+                    isReadOnly={isReadOnly}
+                    isLoading={isFetching || isLoading}
+                    max={maxGuests}
+                  />
+                </>
+              )}
             </CardContent>
 
             <Separator className="my-4" />
@@ -404,7 +451,7 @@ export default function BookingForm({ mode, id, onSubmit, error }: FormProps) {
                   className="px-6"
                   onClick={() => form.reset()}
                   type="reset"
-                  disabled={isLoading}
+                  disabled={isLoading || isFetching}
                 >
                   Reset
                 </Button>
@@ -416,13 +463,17 @@ export default function BookingForm({ mode, id, onSubmit, error }: FormProps) {
                   className="px-6"
                   onClick={() => navigate("/booking")}
                   type="button"
-                  disabled={isLoading}
+                  disabled={isLoading || isFetching}
                 >
                   Cancel
                 </Button>
 
                 {!isReadOnly && (
-                  <Button type="submit" className="px-6" disabled={isLoading}>
+                  <Button
+                    type="submit"
+                    className="px-6"
+                    disabled={isLoading || isFetching}
+                  >
                     Submit
                   </Button>
                 )}

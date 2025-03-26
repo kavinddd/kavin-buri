@@ -5,7 +5,11 @@ import { inject } from '@adonisjs/core'
 import { Logger } from '@adonisjs/core/logger'
 import User from '#models/user'
 import RoomType from '#models/room_type'
-import { RoomTypeNameType } from '../types.js'
+import { BookingStatusType, RoomTypeNameType } from '../types.js'
+import db from '@adonisjs/lucid/services/db'
+import Guest from '#models/guest'
+import BookingGuest from '#models/booking_guest'
+import { ValidationException } from '#exceptions/ValidationException'
 
 interface GetResp {
   booking: BookingType
@@ -65,7 +69,11 @@ export class BookingsService {
     //   roomNameType: roomType.name,
     // }
     //
-    const booking = await Booking.query().where('id', id).preload('roomType').firstOrFail()
+    const booking = await Booking.query()
+      .where('id', id)
+      .preload('roomType')
+      .preload('guests')
+      .firstOrFail()
 
     return booking
   }
@@ -86,17 +94,61 @@ export class BookingsService {
     return booking.id
   }
 
-  async update(id: BookingId, req: UpdateBookingReq, user: User): Promise<BookingId> {
+  async update(
+    id: BookingId,
+    req: UpdateBookingReq & { status?: BookingStatusType },
+    user: User
+  ): Promise<BookingId> {
     const booking = await Booking.findOrFail(id)
-    const { roomTypeName, ...bookingReq } = req
-    const roomType = await RoomType.findByOrFail({ name: roomTypeName })
-    booking.merge({ ...bookingReq, roomTypeId: roomType.id, updatedBy: user.id })
-    await booking.save()
-    return booking.id
+    const { roomTypeName, guests: guestReqs, ...bookingReq } = req
+
+    booking.merge({ ...bookingReq, updatedBy: user.id })
+
+    if (roomTypeName) {
+      const roomType = await RoomType.findByOrFail({ name: roomTypeName })
+      booking.merge({ roomTypeId: roomType.id })
+    }
+
+    const trx = await db.transaction()
+
+    try {
+      if (guestReqs) {
+        const guests = await Guest.updateOrCreateMany('citizenId', guestReqs, { client: trx })
+        const guestIds = guests.map((guest) => guest.id)
+        await booking.related('guests').sync(guestIds, true, trx)
+      }
+      await booking.useTransaction(trx).save()
+      await trx.commit()
+
+      return booking.id
+    } catch (err) {
+      await trx.rollback()
+      throw err
+    }
   }
 
   async delete(id: BookingId): Promise<void> {
     const booking = await Booking.findOrFail(id)
     return booking.delete()
+  }
+
+  async checkIn(id: BookingId, req: UpdateBookingReq, user: User): Promise<BookingId> {
+    if (!req.guests || req.guests.length === 0)
+      throw new ValidationException('Guests cannot be empty')
+
+    const booking = await Booking.findOrFail(id)
+
+    if (booking.status !== 'RESERVED')
+      throw new ValidationException('Only reserved status bookings that are check-inable')
+
+    return this.update(id, { ...req, status: 'CHECKED-IN' }, user)
+  }
+
+  async checkOut(id: BookingId, user: User): Promise<BookingId> {
+    const booking = await Booking.findOrFail(id)
+
+    console.log(booking)
+
+    return this.update(id, { status: 'CHECKED-OUT' }, user)
   }
 }

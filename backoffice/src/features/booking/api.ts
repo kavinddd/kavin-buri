@@ -6,6 +6,7 @@ import {
   BookingSaveReq,
   BookingSearch,
   BookingSort,
+  BookingUpdateReq,
 } from "./types";
 
 const path = "bookings";
@@ -49,4 +50,24 @@ export async function fetchBookings(
   );
 
   return bookings;
+}
+
+export async function checkIn(
+  id: BookingId,
+  req: BookingUpdateReq,
+): Promise<BookingId> {
+  const bookingId = await fetchJson<BookingId>(`${path}/checkIn/${id}`, {
+    method: "POST",
+    body: JSON.stringify(req),
+  });
+
+  return bookingId;
+}
+
+export async function checkOut(bookingId: BookingId): Promise<BookingId> {
+  const id = await fetchJson<BookingId>(`${path}/checkOut/${bookingId}`, {
+    method: "POST",
+  });
+
+  return id;
 }

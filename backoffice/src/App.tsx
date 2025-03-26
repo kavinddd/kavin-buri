@@ -27,6 +27,7 @@ import GuestCreatePage from "./features/guests/GuestCreatePage";
 import GuestEditPage from "./features/guests/GuestEditPage";
 import GuestShowPage from "./features/guests/GuestShowPage";
 import PricingPage from "./features/pricing/PricingPage";
+import CheckInPage from "./features/booking/CheckInPage";
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
             <Route path="show/:id" element={<BookingShowPage />} />
             <Route path="create" element={<BookingCreatePage />} />
             <Route path="edit/:id" element={<BookingEditPage />} />
+            <Route path="checkIn/:id" element={<CheckInPage />} />
           </Route>
           <Route path="room">
             <Route index element={<RoomPage />} />

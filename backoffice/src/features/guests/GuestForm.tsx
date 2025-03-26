@@ -81,7 +81,6 @@ export default function GuestForm({ mode, id, onSubmit, error }: FormProps) {
         : guestFormDefaultValue.dateOfBirth,
     };
   }, [guest]);
-  console.log(defaultValues);
 
   const form = useForm<GuestFormType>({
     resolver: zodResolver(guestFormSchema),
@@ -101,8 +100,6 @@ export default function GuestForm({ mode, id, onSubmit, error }: FormProps) {
   }
 
   const isReadOnly = mode === "SHOW";
-
-  console.log(form.watch());
 
   return (
     <>

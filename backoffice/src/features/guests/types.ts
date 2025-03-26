@@ -24,7 +24,6 @@ export type GuestSearch = Partial<Guest>;
 export type GuestPaginateReq = PaginateReq<GuestSort, GuestSearch>;
 
 export interface GuestSaveReq {
-  name: string;
   citizenId: string;
 
   firstName: string;

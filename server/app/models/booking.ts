@@ -1,13 +1,14 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, hasOne } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column, hasOne, manyToMany } from '@adonisjs/lucid/orm'
 import type { BookingSourceType, BookingStatusType, RoomTypeNameType } from '../types.js'
 import { PaginateReq } from '../paginate.js'
 import { ModelAttributes } from '@adonisjs/lucid/types/model'
 import type { UserId } from './user.js'
 import type { RoomTypeId } from './room_type.js'
 import RoomType from './room_type.js'
-import type { BelongsTo, HasOne } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
 import type { RoomId } from './room.js'
+import Guest from './guest.js'
 
 export default class Booking extends BaseModel {
   @column({ isPrimary: true })
@@ -78,6 +79,11 @@ export default class Booking extends BaseModel {
 
   @belongsTo(() => RoomType)
   declare roomType: BelongsTo<typeof RoomType>
+
+  @manyToMany(() => Guest, {
+    pivotTable: 'booking_guest',
+  })
+  declare guests: ManyToMany<typeof Guest>
 }
 
 export type BookingId = number

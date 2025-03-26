@@ -92,6 +92,32 @@ export default class BookingsController {
     return this.service.update(id, req, auth.getUserOrFail())
   }
 
+  async checkIn({ request, bouncer, response, auth }: HttpContext) {
+    if (await bouncer.with(BookingPolicy).denies('create')) {
+      return response.forbidden('No access')
+    }
+
+    const {
+      params: { id },
+    } = await request.validateUsing(idNumberValidator)
+
+    const req: UpdateBookingReq = await request.validateUsing(updateBookingValidator)
+
+    return this.service.checkIn(id, req, auth.getUserOrFail())
+  }
+
+  async checkOut({ request, bouncer, response, auth }: HttpContext) {
+    if (await bouncer.with(BookingPolicy).denies('create')) {
+      return response.forbidden('No access')
+    }
+
+    const {
+      params: { id },
+    } = await request.validateUsing(idNumberValidator)
+
+    return this.service.checkOut(id, auth.getUserOrFail())
+  }
+
   async delete({ params, bouncer, response }: HttpContext) {
     if (await bouncer.with(BookingPolicy).denies('create')) {
       return response.forbidden('No access')

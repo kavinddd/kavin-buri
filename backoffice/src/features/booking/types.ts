@@ -5,6 +5,7 @@ import {
   RoomTypeNameType,
 } from "@/core/types";
 import { RoomType } from "../roomType/types";
+import { Guest, GuestSaveReq } from "../guests/types";
 
 export interface Booking {
   id: BookingId;
@@ -23,6 +24,8 @@ export interface Booking {
   source: BookingSourceType;
 
   roomType?: RoomType;
+
+  guests?: Guest[];
 }
 
 export type BookingId = number;
@@ -44,6 +47,8 @@ export interface BookingSaveReq {
   hasAbf: boolean;
   hasTransportation: boolean;
   source: BookingSourceType;
+
+  guests: GuestSaveReq[];
 }
 
 export type BookingUpdateReq = Partial<BookingSaveReq>;

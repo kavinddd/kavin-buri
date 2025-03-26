@@ -57,7 +57,7 @@ export type CreateBookingReq = Infer<typeof createBookingValidator>
 
 export const updateBookingValidator = vine.compile(
   vine.object({
-    roomTypeName: vine.enum(roomTypeNameEnum),
+    roomTypeName: vine.enum(roomTypeNameEnum).optional(),
     contactName: vine.string().trim().optional(),
     email: vine.string().trim().optional(),
     contactNumber: vine.string().trim().optional(),
@@ -75,6 +75,20 @@ export const updateBookingValidator = vine.compile(
     hasAbf: vine.boolean().optional(),
     hasTransportation: vine.boolean().optional(),
     source: vine.enum(bookingSourceEnum).optional(),
+
+    guests: vine
+      .array(
+        vine.object({
+          citizenId: vine.string(),
+          firstName: vine.string(),
+          lastName: vine.string(),
+          nationality: vine.string(),
+          dateOfBirth: vine
+            .date({ formats: ['iso8601'] })
+            .transform((date) => DateTime.fromJSDate(date)),
+        })
+      )
+      .optional(),
   })
 )
 export type UpdateBookingReq = Infer<typeof updateBookingValidator>
