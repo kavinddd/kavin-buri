@@ -31,7 +31,7 @@ export class UserService {
       if (search.id) query.where('id', '=', search.id)
       if (search.fullName) query.where('full_name', 'ilike', `%${search.fullName}%`)
       if (search.username) query.where('username', 'ilike', `%${search.username}%`)
-      if (search.isActive) query.where('is_active', '=', `${search.isActive}`)
+      if (search.isActive !== undefined) query.where('is_active', '=', `${search.isActive}`)
       if (search.roleGroupIds) {
         const subQuery = UserRoleGroup.query()
           .whereIn('role_group_id', search.roleGroupIds)
