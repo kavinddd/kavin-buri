@@ -11,7 +11,7 @@ export default function BookingEditPage() {
   const { id } = useParams();
 
   const mutation = useMutation<BookingId, Error, BookingSaveReq>({
-    mutationFn: (req: BookingSaveReq) => updateBooking(req, Number(id)),
+    mutationFn: (req: BookingSaveReq) => updateBooking(Number(id), req),
     onSuccess: (bookingId) => {
       toast.success("Booking is succesfully updated.");
       queryClient.invalidateQueries({ queryKey: ["bookings"] });

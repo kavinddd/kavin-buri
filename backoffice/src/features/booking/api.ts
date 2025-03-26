@@ -27,8 +27,8 @@ export async function createBooking(req: BookingSaveReq): Promise<BookingId> {
 }
 
 export async function updateBooking(
-  req: BookingSaveReq,
   id: BookingId,
+  req: BookingUpdateReq,
 ): Promise<BookingId> {
   const bookingId = await fetchJson<BookingId>(`${path}/${id}`, {
     method: "PATCH",
