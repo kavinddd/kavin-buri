@@ -19,6 +19,12 @@ export type RoomStatusType = 'OUT_OF_SERVICE' | 'OCCUPIED' | 'AVAILABLE' | 'RESE
 
 export type ReservationType = 'NON-GUARANTEED' | 'DEPOSIT-RECEIVED' | 'GUARANTEED'
 
-export type BookingStatusType = 'RESERVED' | 'CHECKED-IN' | 'CHECKED-OUT' | 'NO-SHOW' | 'CANCELLED'
+export type BookingStatusType =
+  | 'NON-CONFIRMED'
+  | 'RESERVED'
+  | 'CHECKED-IN'
+  | 'CHECKED-OUT'
+  | 'NO-SHOW'
+  | 'CANCELLED'
 
 export type BookingSourceType = 'WALK-IN' | 'PHONE' | 'WEBSITE' | 'OTHERS'

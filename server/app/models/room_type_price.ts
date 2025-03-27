@@ -1,9 +1,11 @@
-import { BaseModel, column, dateColumn } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column, dateColumn } from '@adonisjs/lucid/orm'
 import { ModelAttributes } from '@adonisjs/lucid/types/model'
 import { PaginateReq } from '../paginate.js'
 import { DateTime } from 'luxon'
 import type { UserId } from './user.js'
 import type { RoomTypeId } from './room_type.js'
+import RoomType from './room_type.js'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
 export default class RoomTypePrice extends BaseModel {
   static table = 'room_type_price'
@@ -28,9 +30,12 @@ export default class RoomTypePrice extends BaseModel {
 
   @column()
   declare updatedBy: UserId
+  //
+  // @column.dateTime({ autoCreate: true, autoUpdate: true })
+  // declare updatedAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime
+  @belongsTo(() => RoomType)
+  declare roomType: BelongsTo<typeof RoomType>
 }
 
 export type RoomTypePriceId = number
@@ -44,7 +49,7 @@ export const roomTypePriceSortEnum: RoomTypePriceSort[] = [
   'roomTypeId',
   'date',
   'price',
-  'updatedAt',
+  // 'updatedAt',
 ]
 export type RoomTypePriceSearch = Partial<RoomTypePriceSort>
 export type RoomPaginateReq = PaginateReq<RoomTypePriceSearch, RoomTypePriceSort>

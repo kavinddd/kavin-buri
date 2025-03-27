@@ -14,8 +14,10 @@ import { differenceInDays, format, isEqual } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import RoomPriceCalendar from './RoomPriceCalendar'
 import { useState } from 'react'
+import { PriceCalendar } from '#services/pricings_service'
 
 type RoomPriceCalendarDialogProps = {
+  priceCalendar: PriceCalendar
   placeholder: string
   value: DateRange | undefined
   onSubmit: (value: DateRange | undefined) => void
@@ -24,6 +26,7 @@ type RoomPriceCalendarDialogProps = {
 }
 
 export default function RoomPriceCalendarDialog({
+  priceCalendar,
   placeholder = 'Pick a date',
   value,
   onSubmit,
@@ -71,6 +74,7 @@ export default function RoomPriceCalendarDialog({
         </DialogDescription>
         <DialogTitle className="text-primary">Get the best rate now!</DialogTitle>
         <RoomPriceCalendar
+          priceCalendar={priceCalendar}
           mode="range"
           selected={internalValue}
           onSelect={handleSelect}

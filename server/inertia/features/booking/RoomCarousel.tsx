@@ -8,15 +8,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '~/lib/components/ui/carousel'
+import { RoomTypeNameType } from '../../../app/types'
 
-export type RoomType = 'DELUXE' | 'STUDIO' | 'TWIN' | 'SUITE'
-
-type RoomImage = {
-  roomType: RoomType
+type RoomImageByType = {
+  roomType: RoomTypeNameType
   imageName: string
 }
 
-const ROOM_IMAGES: RoomImage[] = [
+const rooms: RoomImageByType[] = [
   {
     roomType: 'DELUXE',
     imageName: 'room_1.jpg',
@@ -26,14 +25,17 @@ const ROOM_IMAGES: RoomImage[] = [
     imageName: 'room_2.jpeg',
   },
   {
-    roomType: 'TWIN',
+    roomType: 'SUPERIOR_TWIN',
     imageName: 'room_3.jpeg',
   },
-  // "STUDIO": "",
+  {
+    roomType: 'SUPERIOR_DOUBLE',
+    imageName: 'room_3.jpeg',
+  },
 ]
 
 type Props = {
-  onSelect: (roomType: RoomType) => void
+  onSelect: (roomType: RoomTypeNameType) => void
 }
 
 export default function RoomCarousel({ onSelect }: Props) {
@@ -44,7 +46,7 @@ export default function RoomCarousel({ onSelect }: Props) {
 
     api.on('select', () => {
       const selectedIndex = api.selectedScrollSnap()
-      onSelect(ROOM_IMAGES[selectedIndex].roomType)
+      onSelect(rooms[selectedIndex].roomType)
     })
   }, [api])
 
@@ -52,7 +54,7 @@ export default function RoomCarousel({ onSelect }: Props) {
     <div>
       <Carousel opts={{ loop: true }} setApi={setApi}>
         <CarouselContent>
-          {ROOM_IMAGES.map((roomImage) => (
+          {rooms.map((roomImage) => (
             <CarouselItem key={roomImage.roomType}>
               <AspectRatio ratio={16 / 9}>
                 <div className="rounded-xl bg-black absolute h-full w-full opacity-30 z-10 hover:bg-transparent " />

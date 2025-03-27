@@ -16,7 +16,14 @@ export default class extends BaseSchema {
       table.string('contact_number').notNullable()
       table.text('remark')
       table
-        .enu('status', ['RESERVED', 'CHECKED-IN', 'CHECKED-OUT', 'NO-SHOW', 'CANCELLED'])
+        .enu('status', [
+          'NON-CONFIRMED',
+          'RESERVED',
+          'CHECKED-IN',
+          'CHECKED-OUT',
+          'NO-SHOW',
+          'CANCELLED',
+        ])
         .notNullable()
         .defaultTo('RESERVED')
       table

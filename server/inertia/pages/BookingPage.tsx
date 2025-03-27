@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react'
+import { Head, useForm, usePage } from '@inertiajs/react'
 import { Label } from '@radix-ui/react-label'
 import { CircleChevronRightIcon } from 'lucide-react'
 import { useState } from 'react'
@@ -11,8 +11,14 @@ import { Button } from '~/lib/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader } from '~/lib/components/ui/card'
 import { Input } from '~/lib/components/ui/input'
 import { Separator } from '~/lib/components/ui/separator'
+import { BookingSourceType, RoomTypeNameType } from '../../app/types'
+import { addDays } from 'date-fns'
+import type { InferPageProps } from '@adonisjs/inertia/types'
+import type BookingsController from '#controllers/bookings_controller'
+import { BookingIndexProps } from '#controllers/bookings_controller'
+import { toast } from 'sonner'
 
-export default function BookingPage() {
+export default function BookingPage(props: BookingIndexProps) {
   return (
     <>
       <Head title="Book a room" />
@@ -34,48 +40,68 @@ export default function BookingPage() {
 }
 
 type BookingFormType = {
-  firstName: string
-  lastName: string
+  contactName: string
   email: string
-  telNum: string
+  contactNumber: string
+  checkInDate: Date
+  checkOutDate: Date
   numAdult: number
   numChildren: number
-  checkInDate: string
-  checkOutDate: string
-  roomType: RoomType
+  roomPrice: number
+  roomTypeName: RoomTypeNameType
+  hasAbf: boolean
+  hasTransportation: boolean
+  source: BookingSourceType
 }
 
 const defaultFormData: BookingFormType = {
-  firstName: '',
-  lastName: '',
+  contactName: '',
   email: '',
-  telNum: '',
+  contactNumber: '',
   numAdult: 1,
   numChildren: 0,
-  checkInDate: '',
-  checkOutDate: '',
-  roomType: 'DELUXE',
+  checkInDate: new Date(),
+  checkOutDate: addDays(new Date(), 1),
+  roomPrice: 0,
+  roomTypeName: 'DELUXE',
+  hasAbf: false,
+  hasTransportation: false,
+  source: 'WEBSITE',
 }
 
 function BookingForm() {
+  const { props } = usePage<BookingIndexProps>()
   const { data, setData, post, processing, errors } = useForm<BookingFormType>(defaultFormData)
 
   const [dateRange, setDateRange] = useState<DateRange>()
 
+  function handleDateRangeChange(dateRange: DateRange | undefined) {
+    if (dateRange?.from) setData('checkInDate', dateRange.from)
+    if (dateRange?.to) setData('checkOutDate', dateRange.to)
+    setDateRange(dateRange)
+  }
+
   function handleSubmit(e: React.FormEvent) {
-    console.log('submit form')
     e.preventDefault()
     e.stopPropagation()
 
-    post('/bookings', {
+    post('/booking', {
       preserveScroll: true,
-      onError: (e) => console.error(e),
-      onSuccess: () => console.log('create booking successfully'),
+      onError: (e) => {
+        toast.error(e.message)
+      },
+      onSuccess: () => {
+        console.log('Booking is made')
+        toast.success('Booking is made!')
+      },
     })
   }
 
-  //TODO: add confirm modal
-  //
+  toast.success('test')
+
+  if (errors) console.log(errors)
+
+  const priceCalendar = props.priceCalendarByRoomType[data.roomTypeName]
 
   return (
     <Card className="mx-auto w-full md:p-4 lg:p-6 max-w-[1200px]">
@@ -89,24 +115,26 @@ function BookingForm() {
           <div className="flex flex-col lg:flex-row">
             <div className="flex-1">
               <div className="flex flex-col gap-2">
-                <Input type="text" disabled={true} readOnly={true} value={data.roomType} />
-                <RoomCarousel onSelect={(roomType) => setData('roomType', roomType)} />
+                <Input type="text" disabled={true} readOnly={true} value={data.roomTypeName} />
+                <RoomCarousel onSelect={(roomTypeName) => setData('roomTypeName', roomTypeName)} />
 
                 <div className="flex flex-col xl:flex-row gap-2 xl:gap-4 items-center">
                   <RoomPriceCalendarDialog
+                    priceCalendar={priceCalendar}
                     placeholder="Check-In"
                     showTo={false}
                     showFrom={true}
                     value={dateRange}
-                    onSubmit={setDateRange}
+                    onSubmit={handleDateRangeChange}
                   />
                   <span className="hidden xl:inline text-muted-foreground"> to </span>
                   <RoomPriceCalendarDialog
+                    priceCalendar={priceCalendar}
                     placeholder="Check-Out"
                     showTo={true}
                     showFrom={false}
                     value={dateRange}
-                    onSubmit={setDateRange}
+                    onSubmit={handleDateRangeChange}
                   />
                 </div>
               </div>
@@ -122,20 +150,29 @@ function BookingForm() {
               <div className="flex flex-col gap-2 lg:gap-6 flex-1">
                 <Input
                   type="text"
-                  placeholder="First Name"
-                  value={data.firstName}
-                  onChange={(e) => setData('firstName', e.target.value)}
+                  placeholder="Contact Name"
+                  value={data.contactName}
+                  onChange={(e) => setData('contactName', e.target.value)}
                   required
                 />
-                {errors.firstName && <p>{errors.firstName}</p>}
+                {errors.contactName && <p>{errors.contactName}</p>}
+
                 <Input
                   type="text"
-                  placeholder="Last Name"
-                  value={data.lastName}
-                  onChange={(e) => setData('lastName', e.target.value)}
+                  placeholder="Email"
+                  value={data.email}
+                  onChange={(e) => setData('email', e.target.value)}
                   required
                 />
-                {errors.lastName && <p>{errors.lastName}</p>}
+                {errors.email && <p>{errors.email}</p>}
+                <Input
+                  type="text"
+                  placeholder="Contact Number"
+                  value={data.contactNumber}
+                  onChange={(e) => setData('contactNumber', e.target.value)}
+                  required
+                />
+                {errors.contactNumber && <p>{errors.contactNumber}</p>}
                 <div className="relative">
                   <Input
                     type="number"
@@ -158,7 +195,7 @@ function BookingForm() {
                     type="number"
                     placeholder="Children"
                     max={6}
-                    min={1}
+                    min={0}
                     value={data.numChildren}
                     onChange={(e) => setData('numChildren', Number(e.target.value))}
                     required
@@ -173,7 +210,7 @@ function BookingForm() {
                 <div className="flex flex-col md:flex-row md:gap-6 text-muted-foreground text-sm md:text-md">
                   <div className="flex items-center gap-2">
                     <Label>Include Breakfast</Label>
-                    <Input className="w-5 md:w-6 block" type="checkbox" />
+                    <Input className="w-5 m:w-6 block" type="checkbox" />
                   </div>
 
                   <div className="flex items-center gap-2">

@@ -3,6 +3,9 @@ import Footer from './Footer'
 import Header from './Header'
 import { ReactNode } from 'react'
 import AppSidebar from './AppSidebar'
+import { Toaster } from '~/lib/components/ui/sonner'
+import { usePage } from '@inertiajs/react'
+import { toast } from 'sonner'
 
 interface Props {
   children: ReactNode
@@ -10,6 +13,8 @@ interface Props {
 }
 
 export function MainLayout({ children, backgroundSrc }: Props) {
+  const { flash } = usePage().props
+
   return (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />
@@ -35,6 +40,7 @@ export function MainLayout({ children, backgroundSrc }: Props) {
             </>
           )}
         </div>
+        <Toaster richColors expand theme="light" />
 
         <Footer />
       </div>

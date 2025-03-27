@@ -41,6 +41,7 @@ export const roomStatusEnum: RoomStatusType[] = [
 // ]
 
 export const bookingStatusEnum: BookingStatusType[] = [
+  'NON-CONFIRMED',
   'RESERVED',
   'CHECKED-IN',
   'CHECKED-OUT',

@@ -34,7 +34,7 @@ function Navbar() {
   return (
     <>
       <nav>
-        <ul className="flex justify-center gap-10 lg:gap-28 items-center ">
+        <ul className="flex justify-center gap-10 lg:gap-20 items-center ">
           {navs
             .filter((nav) => nav.url !== '/booking')
             .map((nav) => (

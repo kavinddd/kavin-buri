@@ -87,10 +87,7 @@ export default class RoleGroupsController {
   }
 
   async listDropdown({ request }: HttpContext) {
-    console.log(request.qs())
     const { q } = await dropdownValidator.validate(request.qs())
-
-    console.log(q)
 
     return this.service.listDropdown(q)
   }

@@ -10,12 +10,12 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 
+const BookingsController = () => import('#controllers/bookings_controller')
 const PricingsController = () => import('#controllers/pricings_controller')
 const UsersController = () => import('#controllers/users_controller')
 const RoleGroupsController = () => import('#controllers/role_groups_controller')
 const RoomsController = () => import('#controllers/rooms_controller')
 const GuestsController = () => import('#controllers/guests_controller')
-const BookingsController = () => import('#controllers/bookings_controller')
 const SessionController = () => import('#controllers/session_controller')
 const HealthChecksController = () => import('#controllers/health_checks_controller')
 
@@ -23,12 +23,23 @@ const HealthChecksController = () => import('#controllers/health_checks_controll
 router.on('/').renderInertia('HomePage')
 router.on('/contact').renderInertia('ContactPage')
 router.on('/about').renderInertia('AboutPage')
-router.on('/booking').renderInertia('BookingPage')
 router.on('/rooms').renderInertia('RoomsPage')
 
-router.post('/bookings', [BookingsController, 'store']).as('bookings.store')
-router.get('/bookings', [BookingsController, 'list']).as('bookings.list')
+router
+  .group(() => {
+    router.get('/', [BookingsController, 'index']).as('index')
+    router.post('/', [BookingsController, 'createOnlineBooking']).as('store')
+  })
+  .prefix('booking')
+  .as('booking')
 
+router
+  .group(() => {
+    router.get('/:confirmNo?', [BookingsController, 'myBooking']).as('index')
+    router.get('/confirm/:confirmNo', [BookingsController, 'confirm']).as('confirm')
+  })
+  .prefix('myBooking')
+  .as('myBooking')
 // API
 
 router

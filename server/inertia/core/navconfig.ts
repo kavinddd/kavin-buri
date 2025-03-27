@@ -21,6 +21,11 @@ export const navs: NavType[] = [
     label: 'Rooms',
   },
   {
+    url: '/myBooking',
+    label: 'My Booking',
+  },
+
+  {
     url: '/booking',
     label: 'Book',
   },

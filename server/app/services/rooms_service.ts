@@ -8,6 +8,7 @@ import RoomType from '#models/room_type'
 import { ListDropdown } from '../dropdown.js'
 import RoleGroup, { RoleGroupId } from '#models/role_group'
 import { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
+import { RoomTypeNameType } from '../types.js'
 
 @inject()
 export class RoomsService {

@@ -3,124 +3,18 @@ import { formatNumber } from '~/lib/utils/formatNumber'
 import { Calendar, CalendarProps } from '~/lib/components/ui/calendar'
 import { cn } from '~/lib/lib/utils'
 import { isAfter, isBefore, isEqual, isPast, isToday } from 'date-fns'
+import { PriceCalendar } from '#services/pricings_service'
 
-type Year = number
-type Month = number
-type Day = number
-type RoomPrice = number
-type PriceCalendar = Record<Year, Record<Month, Record<Day, RoomPrice>>>
-
-const tempData: PriceCalendar = {
-  2025: {
-    1: {
-      1: 1550,
-      2: 2460,
-      3: 2700,
-      4: 1980,
-      5: 2320,
-      6: 1670,
-      7: 2130,
-      8: 2250,
-      9: 1580,
-      10: 2430,
-      11: 2200,
-      12: 1790,
-      13: 1950,
-      14: 2090,
-      15: 1800,
-      16: 2380,
-      17: 1620,
-      18: 1850,
-      19: 2020,
-      20: 2300,
-      21: 1600,
-      22: 2140,
-      23: 2400,
-      24: 1700,
-      25: 2500,
-      26: 1900,
-      27: 2200,
-      28: 2340,
-      29: 1890,
-    },
-
-    2: {
-      1: 1550,
-      2: 2460,
-      3: 2700,
-      4: 1980,
-      5: 2320,
-      6: 1670,
-      7: 2130,
-      8: 2250,
-      9: 1580,
-      10: 2430,
-      11: 2200,
-      12: 1790,
-      13: 1950,
-      14: 2090,
-      15: 1800,
-      16: 2380,
-      17: 1620,
-      18: 1850,
-      19: 2020,
-      20: 2300,
-      21: 1600,
-      22: 2140,
-      23: 2400,
-      24: 1700,
-      25: 2500,
-      26: 1900,
-      27: 2200,
-      28: 2340,
-      29: 1890,
-      30: 1890,
-      31: 1600,
-    },
-    3: {
-      1: 1550,
-      2: 2460,
-      3: 2700,
-      4: 1980,
-      5: 2320,
-      6: 1670,
-      7: 2130,
-      8: 2250,
-      9: 1580,
-      10: 2430,
-      11: 2200,
-      12: 1790,
-      13: 1950,
-      14: 2090,
-      15: 1800,
-      16: 2380,
-      17: 1620,
-      18: 1850,
-      19: 2020,
-      20: 2300,
-      21: 1600,
-      22: 2140,
-      23: 2400,
-      24: 1700,
-      25: 2500,
-      26: 1900,
-      27: 2200,
-      28: 2340,
-      29: 1890,
-      30: 1500,
-      31: 1600,
-    },
-  },
+function getRoomPriceByDate(priceCalendar: PriceCalendar, date: Date) {
+  return priceCalendar[date.getFullYear()]?.[date.getMonth() + 1]?.[date.getDate()]
 }
 
-function getRoomPriceByDate(date: Date) {
-  return tempData[date.getFullYear()]?.[date.getMonth() + 1]?.[date.getDate()]
-}
+function RoomPriceDay(
+  props: DayContentProps & Pick<RoomPriceCalendarProps, 'selected' | 'priceCalendar'>
+) {
+  const { date, selected, priceCalendar } = props
 
-function RoomPriceDay(props: DayContentProps & Pick<CalendarProps, 'selected'>) {
-  const { date, selected } = props
-  const roomPrice = getRoomPriceByDate(date)
-
+  const roomPrice = getRoomPriceByDate(priceCalendar, date)
   let isSelected = false
   let isLastSelected = false
 
@@ -155,9 +49,10 @@ function RoomPriceDay(props: DayContentProps & Pick<CalendarProps, 'selected'>) 
   )
 }
 
-export default function RoomPriceCalendar(props: CalendarProps) {
-  const { selected } = props
+type RoomPriceCalendarProps = CalendarProps & { priceCalendar: PriceCalendar }
 
+export default function RoomPriceCalendar(props: RoomPriceCalendarProps) {
+  const { selected, priceCalendar } = props
   return (
     <Calendar
       classNames={{
@@ -175,11 +70,13 @@ export default function RoomPriceCalendar(props: CalendarProps) {
       }}
       components={{
         // Day: RoomPriceDay,
-        DayContent: (props) => <RoomPriceDay {...props} selected={selected} />,
+        DayContent: (props) => (
+          <RoomPriceDay {...props} selected={selected} priceCalendar={priceCalendar} />
+        ),
       }}
       disabled={(day) => {
         if (isPast(day) && !isToday(day)) return true
-        if (!getRoomPriceByDate(day)) return true
+        if (!getRoomPriceByDate(priceCalendar, day)) return true
         // if (isDateRange(selected) && selected?.from && isEqual(selected.from, day)) return true
         return false
       }}

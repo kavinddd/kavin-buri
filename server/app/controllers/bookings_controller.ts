@@ -1,4 +1,4 @@
-import { BookingId, BookingPaginateReq } from '#models/booking'
+import Booking, { BookingId, BookingPaginateReq } from '#models/booking'
 import BookingPolicy from '#policies/booking_policy'
 import { BookingsService } from '#services/bookings_service'
 import { inject } from '@adonisjs/core'
@@ -13,18 +13,77 @@ import {
 } from '#validators/booking'
 
 import { idNumberValidator } from '#validators/commons'
+import { PriceCalendarByRoomType, PricingsService } from '#services/pricings_service'
+import { DateTime } from 'luxon'
+import { PageProps } from '@adonisjs/inertia/types'
+
+export interface BookingIndexProps extends PageProps {
+  priceCalendarByRoomType: PriceCalendarByRoomType
+}
 
 @inject()
 export default class BookingsController {
-  constructor(private service: BookingsService) {}
+  constructor(
+    private service: BookingsService,
+    private pricingsService: PricingsService
+  ) {}
 
   //region inertia
   //
-  async list() {
-    return
+  async index({ inertia }: HttpContext) {
+    const priceCalendarByRoomType = await this.pricingsService.listPriceByRoomType({
+      from: DateTime.now(),
+      to: DateTime.now().plus({ months: 6 }),
+    })
+
+    return inertia.render('BookingPage', {
+      priceCalendarByRoomType,
+    } as BookingIndexProps)
   }
-  async store({ inertia }: HttpContext) {
-    return inertia.render('BookingPage')
+
+  async createOnlineBooking({ request, response }: HttpContext) {
+    try {
+      const req: CreateBookingReq = await request.validateUsing(createBookingValidator)
+
+      const confirmBookingNo = await this.service.createOnlineBook(req)
+
+      console.log('confirm booking no :', confirmBookingNo)
+      response.redirect().toRoute('myBooking.index', { confirmNo: confirmBookingNo })
+      console.log('redirected')
+    } catch (err) {
+      console.log(err)
+      response.redirect().toRoute('booking.index')
+    }
+  }
+
+  async myBooking({ inertia, params }: HttpContext) {
+    const confirmNo = params.confirmNo
+
+    if (!confirmNo) {
+      return inertia.render('MyBookingPage')
+    }
+
+    const booking = await Booking.findBy({ confirmBookingNo: confirmNo })
+
+    if (!booking)
+      return inertia.render('MyBookingPage', {
+        errors: [`Confirm No (${confirmNo}) doesn't exist`],
+      })
+
+    return inertia.render('MyBookingPage', { booking })
+  }
+
+  async confirm({ inertia, response, params }: HttpContext) {
+    const confirmNo = params.confirmNo
+    try {
+      this.service.confirmBookByConfirmNo(confirmNo)
+
+      const booking = await Booking.findBy({ bookingConfirmNo: confirmNo })
+
+      return inertia.render('MyBookingPage', { booking })
+    } catch (err) {
+      response.redirect().toRoute('myBooking.index', { errors: err })
+    }
   }
 
   //endregion

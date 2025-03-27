@@ -12,6 +12,8 @@ import BookingGuest from '#models/booking_guest'
 import { ValidationException } from '#exceptions/ValidationException'
 import { TransactionClientContract } from '@adonisjs/lucid/types/database'
 import Room from '#models/room'
+import { PricingsService } from './pricings_service.js'
+import { randomUUID } from 'crypto'
 
 interface GetResp {
   booking: BookingType
@@ -20,7 +22,10 @@ interface GetResp {
 
 @inject()
 export class BookingsService {
-  constructor(private logger: Logger) {}
+  constructor(
+    private logger: Logger,
+    private pricingService: PricingsService
+  ) {}
   // Your code here
   private sortFields: Record<BookingSort, string> = {
     id: 'id',
@@ -83,32 +88,47 @@ export class BookingsService {
     return booking
   }
 
-  async create(req: CreateBookingReq, user: User): Promise<BookingId> {
+  async create(
+    req: CreateBookingReq & Partial<Pick<BookingType, 'status' | 'confirmBookingNo'>>,
+    user?: User,
+    transaction?: TransactionClientContract
+  ): Promise<BookingId> {
     const { roomTypeName, ...bookingReq } = req
 
     const roomType = await RoomType.findByOrFail({ name: roomTypeName })
 
-    const booking = await Booking.create({
-      ...bookingReq,
-      roomTypeId: roomType.id,
-      createdBy: user.id,
-      updatedBy: user.id,
-    })
+    const trx = transaction ? transaction : await db.transaction()
 
-    this.logger.info(`Booking (${booking.id}) is created`)
-    return booking.id
+    try {
+      const booking = await Booking.create(
+        {
+          ...bookingReq,
+          roomTypeId: roomType.id,
+          createdBy: user?.id,
+          updatedBy: user?.id,
+        },
+        { client: trx }
+      )
+
+      await trx.commit()
+      this.logger.info(`Booking (${booking.id}) is created`)
+      return booking.id
+    } catch (err) {
+      await trx.rollback()
+      throw err
+    }
   }
 
   async update(
     id: BookingId,
-    req: UpdateBookingReq & { status?: BookingStatusType },
-    user: User,
+    req: UpdateBookingReq & Partial<Pick<BookingType, 'status' | 'confirmBookingNo'>>,
+    user?: User,
     transaction?: TransactionClientContract
   ): Promise<BookingId> {
     const booking = await Booking.findOrFail(id)
     const { roomTypeName, guests: guestReqs, ...bookingReq } = req
 
-    booking.merge({ ...bookingReq, updatedBy: user.id })
+    booking.merge({ ...bookingReq, updatedBy: user?.id })
 
     if (roomTypeName) {
       const roomType = await RoomType.findByOrFail({ name: roomTypeName })
@@ -155,8 +175,33 @@ export class BookingsService {
   }
 
   async checkOut(id: BookingId, user: User): Promise<BookingId> {
-    const booking = await Booking.findOrFail(id)
-
     return this.update(id, { status: 'CHECKED-OUT' }, user)
+  }
+
+  async createOnlineBook(req: CreateBookingReq): Promise<string> {
+    const totalPrice = await this.pricingService.getTotalPrice({
+      roomTypeName: req.roomTypeName,
+      from: req.checkInDate,
+      to: req.checkOutDate.minus({ day: 1 }),
+    })
+
+    // if (req.roomPrice !== totalPrice)
+    //   throw new ValidationException('Price was changed, please try again.')
+
+    const bookingId = await this.create({
+      ...req,
+      roomPrice: totalPrice,
+      status: 'NON-CONFIRMED',
+      confirmBookingNo: randomUUID(),
+    })
+
+    const newBooking = await Booking.findOrFail(bookingId)
+    return newBooking.confirmBookingNo
+  }
+
+  async confirmBookByConfirmNo(confirmBookingNo: string): Promise<string> {
+    const booking = await Booking.findByOrFail({ confirmBookingNo: confirmBookingNo })
+    await this.update(booking.id, { status: 'RESERVED' })
+    return confirmBookingNo
   }
 }
