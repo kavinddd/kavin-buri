@@ -1,6 +1,9 @@
 import { fetchJson } from "@/core/api";
 import { Paginated, PaginateReq, toQueryParams } from "@/core/paginate";
 import { Room, RoomId, RoomSaveReq, RoomSearch, RoomSort } from "./types";
+import { ListDropdown } from "@/core/dropdown";
+import { cleanForm } from "@/core/utils";
+import { roomTypeNameEnum } from "@/core/enums";
 
 const path = "rooms";
 
@@ -43,4 +46,25 @@ export async function fetchRooms(
   );
 
   return bookings;
+}
+
+export async function listRoomDropdown(
+  q?: string,
+  search?: RoomSearch,
+): Promise<ListDropdown<RoomId>> {
+  const query = cleanForm({
+    q: q,
+    id: search?.id ? String(search.id) : "",
+    floorNo: search?.floorNo ? String(search.floorNo) : "",
+    roomTypeName: search?.roomTypeName || "",
+    status: search?.status || "",
+  });
+
+  return fetchJson<ListDropdown<RoomId>>(
+    `${path}/dropdown`,
+    {
+      method: "GET",
+    },
+    query,
+  );
 }

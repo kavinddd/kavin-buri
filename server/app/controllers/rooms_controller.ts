@@ -4,15 +4,16 @@ import {
   CreateRoomReq,
   createRoomValidator,
   paginateRoomValidator,
+  searchRoomValidator,
   UpdateRoomReq,
   updateRoomValidator,
 } from '#validators/room'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
-import { randomUUID, UUID } from 'node:crypto'
 import { DEFAULT_PAGINATE_REQ } from '../paginate.js'
 import { RoomId, RoomPaginateReq } from '#models/room'
-import { idNumberValidator } from '#validators/commons'
+import { dropdownValidator, idNumberValidator } from '#validators/commons'
+import { searchRoleGroup } from '#validators/role_group'
 
 @inject()
 export default class RoomsController {
@@ -85,5 +86,13 @@ export default class RoomsController {
 
     const { id } = params
     return this.service.delete(id as RoomId)
+  }
+  async listDropdown({ request }: HttpContext) {
+    const { q } = await dropdownValidator.validate(request.qs())
+    const search = await searchRoomValidator.validate(request.qs())
+
+    console.log(q)
+
+    return this.service.listDropdown(q, search)
   }
 }

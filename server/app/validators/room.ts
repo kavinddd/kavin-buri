@@ -1,7 +1,16 @@
 import vine from '@vinejs/vine'
 import { Infer } from '@vinejs/vine/types'
-import { directionEnum, roleNameEnum, roomStatusEnum, roomTypeNameEnum } from '../enums.js'
+import { directionEnum, roomStatusEnum, roomTypeNameEnum } from '../enums.js'
 import { roomSortEnum } from '#models/room'
+
+export const searchRoom = vine.object({
+  code: vine.string().optional(),
+  floorNo: vine.number().min(2).max(6).optional(),
+  roomTypeName: vine.enum(roomTypeNameEnum).optional(),
+  status: vine.enum(roomStatusEnum).optional(),
+})
+
+export const searchRoomValidator = vine.compile(searchRoom)
 
 export const paginateRoomValidator = vine.compile(
   vine.object({
@@ -16,10 +25,7 @@ export const paginateRoomValidator = vine.compile(
     sort: vine.enum(roomSortEnum).optional(),
 
     // search, not common
-    code: vine.string().optional(),
-    floorNo: vine.number().min(2).max(6).optional(),
-    roomTypeName: vine.enum(roomTypeNameEnum).optional(),
-    status: vine.enum(roomStatusEnum).optional(),
+    ...searchRoom.getProperties(),
   })
 )
 export type PaginateRoomReq = Infer<typeof paginateRoomValidator>

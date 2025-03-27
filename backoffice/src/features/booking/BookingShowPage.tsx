@@ -14,7 +14,7 @@ export default function BookingShowPage() {
 
   return (
     <div className="max-w-screen-xl mx-auto">
-      <BookingForm mode="SHOW" id={Number(id)} showGuests />
+      <BookingForm mode="SHOW" id={Number(id)} showGuests showRoom />
     </div>
   );
 }

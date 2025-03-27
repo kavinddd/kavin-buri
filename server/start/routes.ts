@@ -76,6 +76,7 @@ router
         router
           .group(() => {
             router.get('/', [RoomsController, 'paginate']).as('paginate')
+            router.get('/dropdown', [RoomsController, 'listDropdown']).as('dropdown')
             router.get('/:id', [RoomsController, 'get']).as('get')
             router.post('/', [RoomsController, 'create']).as('create')
             router.patch('/:id', [RoomsController, 'update']).as('update')

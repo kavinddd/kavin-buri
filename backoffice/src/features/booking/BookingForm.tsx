@@ -39,6 +39,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getBooking } from "./api";
 import { Checkbox } from "@/components/ui/checkbox";
 import GuestListFormTable from "./GuestListFormTable";
+import InputDropdown from "@/components/inputs/InputDropdown";
+import { listRoomDropdown } from "../rooms/api";
 
 const bookingFormSchema = z
   .object({
@@ -70,6 +72,8 @@ const bookingFormSchema = z
         dateOfBirth: z.date(),
       })
       .array(),
+
+    roomId: z.number().min(0).optional(),
   })
   .refine((data) => data.checkOutDate > data.checkInDate, {
     message: "Check-out date must be after check-in date",
@@ -103,6 +107,7 @@ interface FormProps {
   onSubmit?: (req: BookingSaveReq) => void;
   error?: Error;
   isLoading?: boolean;
+  showRoom?: boolean;
   showGuests?: boolean;
 }
 
@@ -112,6 +117,7 @@ export default function BookingForm({
   onSubmit,
   error,
   isLoading = false,
+  showRoom = false,
   showGuests = false,
 }: FormProps) {
   const navigate = useNavigate();
@@ -149,6 +155,7 @@ export default function BookingForm({
         ? new Date(booking?.checkOutDate)
         : bookingFormDefaultValue.checkOutDate,
       guests: guests,
+      roomId: booking?.room?.id,
     };
   }, [booking]);
 
@@ -162,7 +169,7 @@ export default function BookingForm({
   }, [defaultValues, form]);
 
   if (isError) {
-    toast.error(fetchError?.message || "Error while etching entity");
+    toast.error(fetchError?.message || "Error while fetching entity");
   }
 
   function onValidSubmit(formData: BookingFormType) {
@@ -392,7 +399,7 @@ export default function BookingForm({
                   name="hasAbf"
                   render={({ field }) => (
                     <FormItem>
-                      <div className="flex mt-4 gap-2 items-center">
+                      <div className="flex gap-2 items-center">
                         <FormLabel>Incl. ABF</FormLabel>
                         <Checkbox
                           className="h-6 w-6"
@@ -413,7 +420,7 @@ export default function BookingForm({
                   name="hasTransportation"
                   render={({ field }) => (
                     <FormItem>
-                      <div className="flex mt-4 gap-2 items-center">
+                      <div className="flex  gap-2 items-center">
                         <FormLabel>Incl. Transportation</FormLabel>
                         <Checkbox
                           className="h-6 w-6"
@@ -428,6 +435,32 @@ export default function BookingForm({
                     </FormItem>
                   )}
                 />
+
+                <span />
+
+                {showRoom && (
+                  <FormField
+                    control={form.control}
+                    name="roomId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Room</FormLabel>
+                        <InputDropdown
+                          value={field.value}
+                          onChange={field.onChange}
+                          apis={listRoomDropdown}
+                          apiKey="rooms"
+                          search={{
+                            roomTypeName: form.watch("roomTypeName"),
+                            status: "AVAILABLE",
+                          }}
+                          readOnly={isReadOnly}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
               {showGuests && (
                 <>

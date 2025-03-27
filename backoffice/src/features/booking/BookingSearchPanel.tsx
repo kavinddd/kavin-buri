@@ -45,7 +45,9 @@ const searchFormSchema = z.object({
   numChildren: z.number().positive().optional(),
   source: z.enum(bookingSourceEnum).optional(),
   status: z.enum(bookingStatusEnum).optional(),
+
   roomTypeName: z.enum(roomTypeNameEnum).optional(),
+  roomCode: z.string().trim().optional(),
 });
 
 type SearchFormType = z.infer<typeof searchFormSchema>;
@@ -61,6 +63,7 @@ const searchFormDefaultValue: SearchFormType = {
   source: undefined, // or a default enum value like bookingSourceEnum[0]
   status: undefined, // or a default enum value like bookingStatusEnum[0]};
   roomTypeName: undefined,
+  roomCode: "",
 };
 
 interface Props {
@@ -228,6 +231,20 @@ export default function BookingSearchPanel({ defaultSearch, onSubmit }: Props) {
                         value={field.value}
                         onChange={field.onChange}
                       />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="roomCode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Room Code</FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

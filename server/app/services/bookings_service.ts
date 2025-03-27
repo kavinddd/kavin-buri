@@ -10,6 +10,8 @@ import db from '@adonisjs/lucid/services/db'
 import Guest from '#models/guest'
 import BookingGuest from '#models/booking_guest'
 import { ValidationException } from '#exceptions/ValidationException'
+import { TransactionClientContract } from '@adonisjs/lucid/types/database'
+import Room from '#models/room'
 
 interface GetResp {
   booking: BookingType
@@ -30,9 +32,7 @@ export class BookingsService {
   async listPaginate(paginateReq: BookingPaginateReq): Promise<Paginated<Booking>> {
     const { page, size, sort, search, direction } = paginateReq
 
-    const query = Booking.query()
-
-    console.log(search)
+    const query = Booking.query().preload('roomType').preload('room')
 
     if (search) {
       if (search.contactName) query.where('contact_name', 'like', `%${search.contactName}%`)
@@ -48,6 +48,10 @@ export class BookingsService {
       }
       if (search.source) query.where('source', '=', search.source)
       if (search.status) query.where('status', '=', search.status)
+      if (search.roomCode) {
+        const subQuery = Room.query().where('code', 'like', `%${search.roomCode}%`).select('id')
+        query.whereIn('room_id', subQuery)
+      }
     }
 
     query.orderBy(sort ? this.sortFields[sort] : this.defaultSort, direction)
@@ -73,6 +77,7 @@ export class BookingsService {
       .where('id', id)
       .preload('roomType')
       .preload('guests')
+      .preload('room')
       .firstOrFail()
 
     return booking
@@ -97,7 +102,8 @@ export class BookingsService {
   async update(
     id: BookingId,
     req: UpdateBookingReq & { status?: BookingStatusType },
-    user: User
+    user: User,
+    transaction?: TransactionClientContract
   ): Promise<BookingId> {
     const booking = await Booking.findOrFail(id)
     const { roomTypeName, guests: guestReqs, ...bookingReq } = req
@@ -109,7 +115,7 @@ export class BookingsService {
       booking.merge({ roomTypeId: roomType.id })
     }
 
-    const trx = await db.transaction()
+    const trx = transaction ? transaction : await db.transaction()
 
     try {
       if (guestReqs) {
@@ -136,18 +142,20 @@ export class BookingsService {
     if (!req.guests || req.guests.length === 0)
       throw new ValidationException('Guests cannot be empty')
 
+    if (!req.roomId) throw new ValidationException('Room must be assigned to check-in')
+
     const booking = await Booking.findOrFail(id)
 
     if (booking.status !== 'RESERVED')
       throw new ValidationException('Only reserved status bookings that are check-inable')
 
-    return this.update(id, { ...req, status: 'CHECKED-IN' }, user)
+    const trx = await db.transaction()
+
+    return this.update(id, { ...req, status: 'CHECKED-IN' }, user, trx)
   }
 
   async checkOut(id: BookingId, user: User): Promise<BookingId> {
     const booking = await Booking.findOrFail(id)
-
-    console.log(booking)
 
     return this.update(id, { status: 'CHECKED-OUT' }, user)
   }

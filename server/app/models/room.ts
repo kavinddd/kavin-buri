@@ -35,6 +35,9 @@ export default class Room extends BaseModel {
 
   @belongsTo(() => RoomType)
   declare roomType: BelongsTo<typeof RoomType>
+
+  @belongsTo(() => Room)
+  declare room: BelongsTo<typeof Room>
 }
 
 export type RoomId = number

@@ -6,6 +6,7 @@ import {
 } from "@/core/types";
 import { RoomType } from "../roomType/types";
 import { Guest, GuestSaveReq } from "../guests/types";
+import { Room, RoomId } from "../rooms/types";
 
 export interface Booking {
   id: BookingId;
@@ -26,6 +27,8 @@ export interface Booking {
   roomType?: RoomType;
 
   guests?: Guest[];
+
+  room?: Room;
 }
 
 export type BookingId = number;
@@ -49,6 +52,8 @@ export interface BookingSaveReq {
   source: BookingSourceType;
 
   guests: GuestSaveReq[];
+
+  roomId?: RoomId;
 }
 
 export type BookingUpdateReq = Partial<BookingSaveReq>;

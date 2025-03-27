@@ -127,12 +127,16 @@ export default function BookingPage() {
       header: "Email",
     },
     {
-      accessorKey: "contactNumber",
-      header: "Tel No.",
+      accessorKey: "roomType.name",
+      header: "Room Type",
     },
     {
-      accessorKey: "roomType",
-      header: "Room",
+      accessorKey: "room.code",
+      header: "Room Code",
+    },
+    {
+      accessorKey: "contactNumber",
+      header: "Tel No.",
     },
     {
       accessorKey: "checkInDate",

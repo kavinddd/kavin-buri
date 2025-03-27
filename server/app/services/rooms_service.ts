@@ -1,10 +1,13 @@
 import { inject } from '@adonisjs/core'
 import { Logger } from '@adonisjs/core/logger'
 import { Paginated, SortDirectionType } from '../paginate.js'
-import Room, { RoomId, RoomPaginateReq, RoomSort } from '#models/room'
+import Room, { RoomId, RoomPaginateReq, RoomSearch, RoomSort } from '#models/room'
 import { CreateRoomReq, UpdateRoomReq } from '#validators/room'
 import User from '#models/user'
 import RoomType from '#models/room_type'
+import { ListDropdown } from '../dropdown.js'
+import RoleGroup, { RoleGroupId } from '#models/role_group'
+import { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 
 @inject()
 export class RoomsService {
@@ -21,21 +24,25 @@ export class RoomsService {
   private defaultSort = this.sortFields.code
   private defaultSortDirection: SortDirectionType = 'asc'
 
+  private querySearch(query: ModelQueryBuilderContract<typeof Room, Room>, search: RoomSearch) {
+    if (search.id) query.where('id', '=', search.id)
+    if (search.floorNo) query.where('floor_no', '=', search.floorNo)
+    if (search.code) query.where('code', 'ilike', `%${search.code}%`)
+    if (search.roomTypeName) {
+      const subQuery = RoomType.query().where('name', search.roomTypeName).select('id')
+      query.whereIn('room_type_id', subQuery)
+    }
+
+    if (search.roomTypeId) query.where('room_type_id', '=', search.roomTypeId)
+  }
+
   async listPaginate(paginateReq: RoomPaginateReq): Promise<Paginated<Room>> {
     const { page, size, sort, search, direction } = paginateReq
 
     const query = Room.query().preload('roomType')
 
     if (search) {
-      if (search.id) query.where('id', '=', search.id)
-      if (search.floorNo) query.where('floor_no', '=', search.floorNo)
-      if (search.code) query.where('code', 'ilike', `%${search.code}%`)
-      if (search.roomTypeName) {
-        const subQuery = RoomType.query().where('name', search.roomTypeName).select('id')
-        query.whereIn('room_type_id', subQuery)
-      }
-
-      if (search.roomTypeId) query.where('room_type_id', '=', search.roomTypeId)
+      this.querySearch(query, search)
     }
 
     query.orderBy(
@@ -78,5 +85,23 @@ export class RoomsService {
   async delete(id: RoomId): Promise<void> {
     const room = await Room.findOrFail(id)
     return room.delete()
+  }
+
+  async listDropdown(q: string, search: RoomSearch): Promise<ListDropdown<RoleGroupId>> {
+    const query = Room.query()
+    if (q) query.where('code', 'ilike', `%${q}%`)
+
+    if (search) {
+      this.querySearch(query, search)
+    }
+
+    const rooms = await query
+
+    return {
+      data: rooms.map((room) => ({
+        id: room.id,
+        label: room.code,
+      })),
+    }
   }
 }

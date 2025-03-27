@@ -22,7 +22,7 @@ export const paginateBookingValidator = vine.compile(
     email: vine.string().optional(),
     source: vine.enum(bookingSourceEnum).optional(),
     status: vine.enum(bookingStatusEnum).optional(),
-    roomType: vine.enum(roomTypeNameEnum).optional(),
+    roomTypeName: vine.enum(roomTypeNameEnum).optional(),
     checkInDate: vine
       .date({ formats: ['YYYY-MM-DD', 'iso8601'] })
       .transform((date) => DateTime.fromJSDate(date))
@@ -31,6 +31,7 @@ export const paginateBookingValidator = vine.compile(
       .date({ formats: ['YYYY-MM-DD', 'iso8601'] })
       .transform((date) => DateTime.fromJSDate(date))
       .optional(),
+    roomCode: vine.string().optional(),
   })
 )
 export type PaginateBookingReq = Infer<typeof paginateBookingValidator>
@@ -89,6 +90,8 @@ export const updateBookingValidator = vine.compile(
         })
       )
       .optional(),
+
+    roomId: vine.number().optional(),
   })
 )
 export type UpdateBookingReq = Infer<typeof updateBookingValidator>

@@ -1,8 +1,7 @@
 import { useNavigate, useParams } from "react-router";
-import CheckInForm from "./CheckInForm";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { BookingId, BookingSaveReq, CheckInReq } from "./types";
+import { BookingId, BookingSaveReq } from "./types";
 import { checkIn } from "./api";
 import BookingForm from "./BookingForm";
 
@@ -36,6 +35,7 @@ export default function CheckInPage() {
         onSubmit={mutation.mutate}
         id={Number(id)}
         showGuests
+        showRoom
       />
     </div>
   );

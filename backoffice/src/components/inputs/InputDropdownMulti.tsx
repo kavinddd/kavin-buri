@@ -1,22 +1,23 @@
 import { useCallback, useMemo } from "react";
 import { MultiSelect } from "../ui/multi-select";
 import { useQuery } from "@tanstack/react-query";
-import { Dropdown, ListDropdown } from "@/core/dropdown";
+import { ListDropdown } from "@/core/dropdown";
 import { DEFAULT_REACT_QUERY_STALE_TIME } from "@/core/constants";
 import { toast } from "sonner";
 import { Input } from "../ui/input";
 
-interface InputDropdownMultiProps<IdType> {
+interface InputDropdownMultiProps<IdType, SearchType> {
   value: IdType[];
   // defaultValue: string[];
-  apis: (q?: string) => Promise<ListDropdown<IdType>>;
+  apis: (q?: string, search?: SearchType) => Promise<ListDropdown<IdType>>;
   onChange: (value: IdType[]) => void;
   placeholder?: string;
   readOnly?: boolean;
   maxCount?: number;
+  search?: SearchType;
 }
 
-export default function InputDropdownMulti<IdType>({
+export default function InputDropdownMulti<IdType, SearchType>({
   value,
   // defaultValue,
   apis,
@@ -24,7 +25,7 @@ export default function InputDropdownMulti<IdType>({
   placeholder = "Select values",
   readOnly,
   maxCount,
-}: InputDropdownMultiProps<IdType>) {
+}: InputDropdownMultiProps<IdType, SearchType>) {
   const {
     data: listDropdown,
     isError,
