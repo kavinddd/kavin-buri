@@ -16,6 +16,7 @@ import { idNumberValidator } from '#validators/commons'
 import { PriceCalendarByRoomType, PricingsService } from '#services/pricings_service'
 import { DateTime } from 'luxon'
 import { PageProps } from '@adonisjs/inertia/types'
+import { ValidationException } from '#exceptions/ValidationException'
 
 export interface BookingIndexProps extends PageProps {
   priceCalendarByRoomType: PriceCalendarByRoomType
@@ -41,47 +42,47 @@ export default class BookingsController {
     } as BookingIndexProps)
   }
 
-  async createOnlineBooking({ request, response }: HttpContext) {
-    try {
-      const req: CreateBookingReq = await request.validateUsing(createBookingValidator)
+  async createOnlineBooking({ request, response, session }: HttpContext) {
+    const req: CreateBookingReq = await request.validateUsing(createBookingValidator)
 
-      const confirmBookingNo = await this.service.createOnlineBook(req)
+    console.log(req)
 
-      console.log('confirm booking no :', confirmBookingNo)
-      response.redirect().toRoute('myBooking.index', { confirmNo: confirmBookingNo })
-      console.log('redirected')
-    } catch (err) {
-      console.log(err)
-      response.redirect().toRoute('booking.index')
-    }
+    const confirmBookingNo = await this.service.createOnlineBook(req)
+
+    session.flash('success', 'Booking is made, please confirm your booking')
+    response.redirect().toRoute('myBooking.index', { confirmNo: confirmBookingNo })
   }
 
-  async myBooking({ inertia, params }: HttpContext) {
+  async myBooking({ inertia, params, session }: HttpContext) {
     const confirmNo = params.confirmNo
 
     if (!confirmNo) {
       return inertia.render('MyBookingPage')
     }
 
-    const booking = await Booking.findBy({ confirmBookingNo: confirmNo })
+    const booking = await Booking.query()
+      .preload('roomType')
+      .where({ confirmBookingNo: confirmNo })
+      .first()
 
-    if (!booking)
-      return inertia.render('MyBookingPage', {
-        errors: [`Confirm No (${confirmNo}) doesn't exist`],
-      })
+    if (!booking) {
+      session.flash('error', 'Booking was not found.')
+      return inertia.render('MyBookingPage', { confirmNo })
+    }
 
-    return inertia.render('MyBookingPage', { booking })
+    return inertia.render('MyBookingPage', { confirmNo, booking })
   }
 
-  async confirm({ inertia, response, params }: HttpContext) {
+  async confirm({ session, response, params }: HttpContext) {
     const confirmNo = params.confirmNo
     try {
-      this.service.confirmBookByConfirmNo(confirmNo)
-
-      const booking = await Booking.findBy({ bookingConfirmNo: confirmNo })
-
-      return inertia.render('MyBookingPage', { booking })
+      await this.service.confirmBookByConfirmNo(confirmNo)
+      session.flash('success', 'Confirm your booking succesfully!')
+      return response.redirect().toRoute('myBooking.index', { confirmNo })
     } catch (err) {
+      if (err instanceof ValidationException) {
+        session.flash('error', err.message)
+      }
       response.redirect().toRoute('myBooking.index', { errors: err })
     }
   }

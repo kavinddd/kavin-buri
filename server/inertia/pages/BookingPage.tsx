@@ -43,8 +43,8 @@ type BookingFormType = {
   contactName: string
   email: string
   contactNumber: string
-  checkInDate: Date
-  checkOutDate: Date
+  checkInDate?: Date
+  checkOutDate?: Date
   numAdult: number
   numChildren: number
   roomPrice: number
@@ -60,8 +60,8 @@ const defaultFormData: BookingFormType = {
   contactNumber: '',
   numAdult: 1,
   numChildren: 0,
-  checkInDate: new Date(),
-  checkOutDate: addDays(new Date(), 1),
+  checkInDate: undefined,
+  checkOutDate: undefined,
   roomPrice: 0,
   roomTypeName: 'DELUXE',
   hasAbf: false,
@@ -72,6 +72,9 @@ const defaultFormData: BookingFormType = {
 function BookingForm() {
   const { props } = usePage<BookingIndexProps>()
   const { data, setData, post, processing, errors } = useForm<BookingFormType>(defaultFormData)
+
+  console.log('errors')
+  console.log(errors)
 
   const [dateRange, setDateRange] = useState<DateRange>()
 
@@ -87,19 +90,8 @@ function BookingForm() {
 
     post('/booking', {
       preserveScroll: true,
-      onError: (e) => {
-        toast.error(e.message)
-      },
-      onSuccess: () => {
-        console.log('Booking is made')
-        toast.success('Booking is made!')
-      },
     })
   }
-
-  toast.success('test')
-
-  if (errors) console.log(errors)
 
   const priceCalendar = props.priceCalendarByRoomType[data.roomTypeName]
 
