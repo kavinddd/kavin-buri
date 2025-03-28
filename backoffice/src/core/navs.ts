@@ -51,7 +51,7 @@ const navs: NavConfig[] = [
         label: "Departure",
         searchParams: {
           checkOutToday: "true",
-          status: "CHECKED-OUT",
+          status: "CHECKED-IN",
         },
       },
     ],
