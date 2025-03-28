@@ -12,6 +12,10 @@ const inertiaConfig = defineConfig({
    */
   sharedData: {
     errors: (ctx) => ctx.inertia.always(() => ctx.session?.flashMessages.get('errors')),
+    error: (ctx) => ctx.inertia.always(() => ctx.session?.flashMessages.get('error')),
+    success: (ctx) => ctx.inertia.always(() => ctx.session?.flashMessages.get('success')),
+    info: (ctx) => ctx.inertia.always(() => ctx.session?.flashMessages.get('info')),
+    warning: (ctx) => ctx.inertia.always(() => ctx.session?.flashMessages.get('warning')),
   },
 
   /**
@@ -19,8 +23,8 @@ const inertiaConfig = defineConfig({
    */
   ssr: {
     enabled: true,
-    entrypoint: 'inertia/app/ssr.tsx'
-  }
+    entrypoint: 'inertia/app/ssr.tsx',
+  },
 })
 
 export default inertiaConfig

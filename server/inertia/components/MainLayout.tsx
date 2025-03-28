@@ -1,11 +1,12 @@
 import { SidebarProvider } from '~/lib/components/ui/sidebar'
 import Footer from './Footer'
 import Header from './Header'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import AppSidebar from './AppSidebar'
 import { Toaster } from '~/lib/components/ui/sonner'
 import { usePage } from '@inertiajs/react'
 import { toast } from 'sonner'
+import { SharedProps } from '@adonisjs/inertia/types'
 
 interface Props {
   children: ReactNode
@@ -13,7 +14,14 @@ interface Props {
 }
 
 export function MainLayout({ children, backgroundSrc }: Props) {
-  const { flash } = usePage().props
+  const { info, success, error, warning } = usePage<SharedProps>().props
+
+  useEffect(() => {
+    if (info) toast.info(info)
+    if (success) toast.success(success)
+    if (error) toast.error(error)
+    if (warning) toast.warning(warning)
+  }, [])
 
   return (
     <SidebarProvider defaultOpen={false}>
