@@ -6,9 +6,8 @@ import { CreateRoomReq, UpdateRoomReq } from '#validators/room'
 import User from '#models/user'
 import RoomType from '#models/room_type'
 import { ListDropdown } from '../dropdown.js'
-import RoleGroup, { RoleGroupId } from '#models/role_group'
+import { RoleGroupId } from '#models/role_group'
 import { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
-import { RoomTypeNameType } from '../types.js'
 
 @inject()
 export class RoomsService {
@@ -88,7 +87,10 @@ export class RoomsService {
     return room.delete()
   }
 
-  async listDropdown(q: string, search: RoomSearch): Promise<ListDropdown<RoleGroupId>> {
+  async listDropdown(
+    q: string | undefined,
+    search: RoomSearch
+  ): Promise<ListDropdown<RoleGroupId>> {
     const query = Room.query()
     if (q) query.where('code', 'ilike', `%${q}%`)
 

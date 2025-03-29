@@ -44,7 +44,7 @@ export class PricingsService {
 
     try {
       const newRoomTypePrices = await RoomTypePrice.updateOrCreateMany(
-        ['date', 'roomTypeId', 'price'],
+        ['date', 'roomTypeId'],
         roomTypePrices,
         {
           client: trx,
