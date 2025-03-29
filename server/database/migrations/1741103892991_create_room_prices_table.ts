@@ -11,6 +11,8 @@ export default class extends BaseSchema {
 
       table.integer('price').unsigned().notNullable()
 
+      table.timestamp('updated_at').notNullable()
+      table.integer('updated_by').unsigned().references('id').inTable('users')
       table.timestamp('created_at').notNullable()
       table.integer('created_by').unsigned().references('id').inTable('users')
     })

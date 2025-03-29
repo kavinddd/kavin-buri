@@ -37,18 +37,19 @@ export class PricingsService {
       roomTypeId: roomType.id,
       price: roomPrice.price,
       createdBy: user.id,
+      updatedBy: user.id,
     }))
-
-    const oldRoomTypePrices = await this.get({ roomTypeName, year, month })
-    const oldRoomTypePriceIds = oldRoomTypePrices.map((it) => it.id)
 
     const trx = await db.transaction()
 
     try {
-      // delete first
-      await RoomTypePrice.query({ client: trx }).whereIn('id', oldRoomTypePriceIds).delete()
-      // then insert to keep records in sync
-      const newRoomTypePrices = await RoomTypePrice.createMany(roomTypePrices, { client: trx })
+      const newRoomTypePrices = await RoomTypePrice.updateOrCreateMany(
+        ['date', 'roomTypeId', 'price'],
+        roomTypePrices,
+        {
+          client: trx,
+        }
+      )
 
       await trx.commit()
       return newRoomTypePrices.map((it) => it.id)

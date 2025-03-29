@@ -30,9 +30,9 @@ export default class RoomTypePrice extends BaseModel {
 
   @column()
   declare updatedBy: UserId
-  //
-  // @column.dateTime({ autoCreate: true, autoUpdate: true })
-  // declare updatedAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
 
   @belongsTo(() => RoomType)
   declare roomType: BelongsTo<typeof RoomType>
