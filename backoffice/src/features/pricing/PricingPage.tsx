@@ -115,23 +115,24 @@ export default function PricingPage() {
     const month = form.getValues("month");
     const days = getDaysInMonth(new Date(year, month - 1, 1));
 
+    form.reset({
+      ...form.getValues(),
+      roomPrices: Array.from({ length: days }).map((_, idx) => ({
+        day: idx + 1,
+        price: undefined,
+      })),
+    });
+
     if (roomTypePrices === undefined || roomTypePrices.length === 0) {
-      form.reset({
-        ...form.getValues(),
-        roomPrices: Array.from({ length: days }).map((_, idx) => ({
-          day: idx + 1,
-          price: undefined,
-        })),
-      });
       return;
     }
 
-    form.reset({
-      ...form.getValues(),
-      roomPrices: roomTypePrices?.map((roomTypePrice) => ({
-        day: new Date(roomTypePrice.date).getDate(),
-        price: roomTypePrice.price,
-      })),
+    roomTypePrices.forEach((it) => {
+      const day = new Date(it.date).getDate();
+      const index = day - 1;
+      const price = it.price;
+      const roomPrice = { day, price };
+      form.setValue(`roomPrices.${index}`, roomPrice);
     });
   }, [defaultValues.roomPrices, form, roomTypePrices]);
 
@@ -211,6 +212,8 @@ export default function PricingPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [form, isEditing, isLoading, isPending, month, setMonth, year, roomPrices], // roomTypePrice is set explicitly, otherwise, it won't rerender properly, so including this ensuring it re-renders every fetching
   );
+
+  console.log(roomPrices);
 
   return (
     <Card className="max-w-screen-xl mx-auto">
