@@ -42,10 +42,18 @@ export const createBookingValidator = vine.compile(
     contactName: vine.string().trim(),
     email: vine.string().trim(),
     contactNumber: vine.string().trim(),
-    checkInDate: vine.date({ formats: ['iso8601'] }).transform((date) => DateTime.fromJSDate(date)),
-    checkOutDate: vine
-      .date({ formats: ['iso8601'] })
-      .transform((date) => DateTime.fromJSDate(date)),
+    checkInDate: vine.date({ formats: ['YYYY-MM-DD', 'iso8601'] }).transform((date) => {
+      console.log(date)
+      const result = DateTime.fromJSDate(date)
+      console.log(result)
+      return result
+    }),
+    checkOutDate: vine.date({ formats: ['YYYY-MM-DD', 'iso8601'] }).transform((date) => {
+      console.log(date)
+      const result = DateTime.fromJSDate(date)
+      console.log(result)
+      return result
+    }),
     roomPrice: vine.number(),
     numAdult: vine.number(),
     numChildren: vine.number(),

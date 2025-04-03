@@ -21,23 +21,20 @@ import {
 import { Input } from "@/components/ui/input";
 import InputNumber from "@/components/inputs/InputNumber";
 import InputEnum from "@/components/inputs/InputEnum";
-import InputDate from "@/components/inputs/InputDate";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { useEffect, useMemo } from "react";
 
-import { addDays } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { CircleAlertIcon } from "lucide-react";
 import { toast } from "sonner";
 import { DEFAULT_REACT_QUERY_STALE_TIME } from "@/core/constants";
 import { useQuery } from "@tanstack/react-query";
 import { getRoom } from "./api";
-import { Checkbox } from "@/components/ui/checkbox";
 
 const roomFormSchema = z.object({
   code: z.string().trim().nonempty(),
-  status: z.string().trim().nonempty(),
+  status: z.enum(roomStatusEnum),
   floorNo: z.number().min(2).max(6),
   roomTypeName: z.enum(roomTypeNameEnum),
 });
@@ -46,7 +43,7 @@ type RoomFormType = z.infer<typeof roomFormSchema>;
 
 const roomFormDefaultValue: RoomFormType = {
   code: "",
-  status: "",
+  status: "OUT_OF_SERVICE",
   floorNo: 2,
   roomTypeName: "SUITE",
 };
@@ -101,6 +98,8 @@ export default function RoomForm({ mode, id, onSubmit, error }: FormProps) {
   }
 
   const isReadOnly = mode === "SHOW";
+
+  console.log(form.formState.errors);
 
   return (
     <>

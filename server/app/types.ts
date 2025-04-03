@@ -15,7 +15,7 @@ export type RoleNameType =
 
 export type RoomTypeNameType = 'SUPERIOR_TWIN' | 'SUPERIOR_DOUBLE' | 'DELUXE' | 'SUITE'
 
-export type RoomStatusType = 'OUT_OF_SERVICE' | 'OCCUPIED' | 'AVAILABLE' | 'RESERVED'
+export type RoomStatusType = 'OUT_OF_SERVICE' | 'OCCUPIED' | 'AVAILABLE' | 'RESERVED' | 'CLEANING'
 
 export type ReservationType = 'NON-GUARANTEED' | 'DEPOSIT-RECEIVED' | 'GUARANTEED'
 

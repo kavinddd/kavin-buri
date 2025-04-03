@@ -91,8 +91,6 @@ export default class RoomsController {
     const { q } = await dropdownValidator.validate(request.qs())
     const search = await searchRoomValidator.validate(request.qs())
 
-    console.log(q)
-
     return this.service.listDropdown(q, search)
   }
 }

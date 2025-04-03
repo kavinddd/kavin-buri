@@ -32,6 +32,7 @@ export const roomStatusEnum: RoomStatusType[] = [
   'OCCUPIED',
   'AVAILABLE',
   'RESERVED',
+  'CLEANING',
 ]
 
 // export const reservationEnum: ReservationType[] = [

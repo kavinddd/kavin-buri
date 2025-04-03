@@ -5,26 +5,21 @@ import { inject } from '@adonisjs/core'
 import { Logger } from '@adonisjs/core/logger'
 import User from '#models/user'
 import RoomType from '#models/room_type'
-import { BookingStatusType, RoomTypeNameType } from '../types.js'
 import db from '@adonisjs/lucid/services/db'
 import Guest from '#models/guest'
-import BookingGuest from '#models/booking_guest'
 import { ValidationException } from '#exceptions/ValidationException'
 import { TransactionClientContract } from '@adonisjs/lucid/types/database'
 import Room from '#models/room'
 import { PricingsService } from './pricings_service.js'
-import { randomUUID } from 'crypto'
-
-interface GetResp {
-  booking: BookingType
-  roomNameType: RoomTypeNameType
-}
+import { RoomsService } from './rooms_service.js'
+import { randomUUID } from 'node:crypto'
 
 @inject()
 export class BookingsService {
   constructor(
     private logger: Logger,
-    private pricingService: PricingsService
+    private pricingService: PricingsService,
+    private roomService: RoomsService
   ) {}
   // Your code here
   private sortFields: Record<BookingSort, string> = {
@@ -94,8 +89,20 @@ export class BookingsService {
     transaction?: TransactionClientContract
   ): Promise<BookingId> {
     const { roomTypeName, ...bookingReq } = req
-
     const roomType = await RoomType.findByOrFail({ name: roomTypeName })
+
+    // const totalDay = checkOutDate.get('day') - checkInDate.get('day')
+    // const maxRoomCount = await Room.query().where('roomTypeId', roomType.id).count('id')
+    // const roomTakenCount = await Booking.query()
+    //   .withCount('room')
+    //   .where('roomTypeId', roomType.id)
+    //   .where('checkInDate', '<=', checkInDate.toSQLDate()!)
+    //   .where('checkOutDate', '>=', checkOutDate.toSQLDate()!)
+    //   .whereNotIn('status', ['NON-CONFIRMED', 'CANCELLED'])
+    //
+    // const isRoomTypeAvailable = maxRoomCount
+    //
+    // if (existBooking) throw new ValidationException('Booking is already exist')
 
     const trx = transaction ? transaction : await db.transaction()
 
@@ -165,17 +172,36 @@ export class BookingsService {
     if (!req.roomId) throw new ValidationException('Room must be assigned to check-in')
 
     const booking = await Booking.findOrFail(id)
+    const room = await Room.findOrFail(req.roomId)
 
     if (booking.status !== 'RESERVED')
       throw new ValidationException('Only reserved status bookings that are check-inable')
 
+    if (room.status !== 'AVAILABLE') throw new ValidationException('The room is not yet available')
+
+    // TODO: weird trx management
     const trx = await db.transaction()
 
-    return this.update(id, { ...req, status: 'CHECKED-IN' }, user, trx)
+    await room.useTransaction(trx).merge({ status: 'OCCUPIED' }).save()
+    await this.update(id, { ...req, status: 'CHECKED-IN' }, user, trx)
+
+    return id
   }
 
   async checkOut(id: BookingId, user: User): Promise<BookingId> {
-    return this.update(id, { status: 'CHECKED-OUT' }, user)
+    const booking = await Booking.query().preload('room').where('id', id).firstOrFail()
+    const room = booking.room
+
+    if (booking.status !== 'CHECKED-IN')
+      throw new ValidationException('The room is not yet checked-in')
+
+    const trx = await db.transaction()
+
+    // TODO: weird trx management
+    await room.useTransaction(trx).merge({ status: 'CLEANING', updatedBy: user.id }).save()
+    await this.update(id, { status: 'CHECKED-OUT' }, user, trx)
+
+    return id
   }
 
   async createOnlineBook(req: CreateBookingReq): Promise<string> {
@@ -201,6 +227,7 @@ export class BookingsService {
 
   async confirmBookByConfirmNo(confirmBookingNo: string): Promise<string> {
     const booking = await Booking.findByOrFail({ confirmBookingNo: confirmBookingNo })
+
     await this.update(booking.id, { status: 'RESERVED' })
     return confirmBookingNo
   }

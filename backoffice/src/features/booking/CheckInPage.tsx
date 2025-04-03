@@ -15,6 +15,7 @@ export default function CheckInPage() {
     onSuccess: (bookingId) => {
       toast.success("Booking is succesfully updated.");
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      queryClient.invalidateQueries({ queryKey: ["rooms"] });
       navigate(`/booking/show/${bookingId}`);
     },
     onError: (error) => {

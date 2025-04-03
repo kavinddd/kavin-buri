@@ -8,6 +8,8 @@ import RoomType from '#models/room_type'
 import { ListDropdown } from '../dropdown.js'
 import { RoleGroupId } from '#models/role_group'
 import { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
+import { TransactionClientContract } from '@adonisjs/lucid/types/database'
+import db from '@adonisjs/lucid/services/db'
 
 @inject()
 export class RoomsService {
@@ -64,21 +66,35 @@ export class RoomsService {
   }
 
   async create(req: CreateRoomReq, user: User): Promise<RoomId> {
-    console.log(user)
     const room = await Room.create({ ...req, updatedBy: user.id })
 
     this.logger.info(`Room (${room.id}) is created`)
     return room.id
   }
 
-  async update(id: RoomId, req: UpdateRoomReq, user: User): Promise<RoomId> {
+  async update(
+    id: RoomId,
+    req: UpdateRoomReq,
+    user: User,
+    transaction?: TransactionClientContract
+  ): Promise<RoomId> {
     const { roomTypeName, ...roomReq } = req
 
     const roomType = await RoomType.findByOrFail('name', roomTypeName)
 
     const room = await Room.findOrFail(id)
-    room.merge({ ...roomReq, roomTypeId: roomType.id, updatedBy: user.id })
-    await room.save()
+
+    const trx = transaction || (await db.transaction())
+
+    room.useTransaction(trx).merge({ ...roomReq, roomTypeId: roomType.id, updatedBy: user.id })
+
+    try {
+      await room.save()
+      await trx.commit()
+    } catch {
+      await trx.rollback()
+    }
+
     return room.id
   }
 

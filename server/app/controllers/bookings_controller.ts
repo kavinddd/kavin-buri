@@ -45,8 +45,6 @@ export default class BookingsController {
   async createOnlineBooking({ request, response, session }: HttpContext) {
     const req: CreateBookingReq = await request.validateUsing(createBookingValidator)
 
-    console.log(req)
-
     const confirmBookingNo = await this.service.createOnlineBook(req)
 
     session.flash('success', 'Booking is made, please confirm your booking')

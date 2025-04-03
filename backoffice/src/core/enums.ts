@@ -25,6 +25,7 @@ export const roomStatusEnum = [
   "OCCUPIED",
   "AVAILABLE",
   "RESERVED",
+  "CLEANING",
 ] as const;
 
 export const reservationEnum: ReservationType[] = [
@@ -34,6 +35,7 @@ export const reservationEnum: ReservationType[] = [
 ];
 
 export const bookingStatusEnum = [
+  "NON-CONFIRMED",
   "RESERVED",
   "CHECKED-IN",
   "CHECKED-OUT",

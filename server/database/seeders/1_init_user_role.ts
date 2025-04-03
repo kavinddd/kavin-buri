@@ -11,65 +11,25 @@ export default class extends BaseSeeder {
     try {
       const roles = await Role.createMany(
         [
-          {
-            name: 'ADMIN',
-            description: 'Able to access all resources',
-          },
-          {
-            name: 'READ_BOOKING',
-            description: 'Able to read bookings',
-          },
-          {
-            name: 'EDIT_BOOKING',
-            description: 'Able to create/edit bookings',
-          },
-          {
-            name: 'READ_ROOM',
-            description: 'Able to read rooms',
-          },
-          {
-            name: 'EDIT_ROOM',
-            description: 'Able to create/edit rooms',
-          },
-          {
-            name: 'READ_ROLE_GROUP',
-            description: 'Able to read role groups',
-          },
-          {
-            name: 'EDIT_ROLE_GROUP',
-            description: 'Able to create/edit role groups',
-          },
-          {
-            name: 'READ_GUEST',
-            description: 'Able to read guests',
-          },
-          {
-            name: 'EDIT_GUEST',
-            description: 'Able to create/edit guests',
-          },
-          {
-            name: 'READ_USER',
-            description: 'Able to read users',
-          },
-          {
-            name: 'EDIT_USER',
-            description: 'Able to create/edit users',
-          },
+          { name: 'ADMIN', description: 'Able to access all resources' },
+          { name: 'READ_BOOKING', description: 'Able to read bookings' },
+          { name: 'EDIT_BOOKING', description: 'Able to create/edit bookings' },
+          { name: 'READ_ROOM', description: 'Able to read rooms' },
+          { name: 'EDIT_ROOM', description: 'Able to create/edit rooms' },
+          { name: 'READ_ROLE_GROUP', description: 'Able to read role groups' },
+          { name: 'EDIT_ROLE_GROUP', description: 'Able to create/edit role groups' },
+          { name: 'READ_GUEST', description: 'Able to read guests' },
+          { name: 'EDIT_GUEST', description: 'Able to create/edit guests' },
+          { name: 'READ_USER', description: 'Able to read users' },
+          { name: 'EDIT_USER', description: 'Able to create/edit users' },
         ],
         { client: trx }
       )
 
-      const roleGroups = await RoleGroup.createMany(
-        [
-          {
-            name: 'Admin',
-          },
-          {
-            name: 'Front Office',
-          },
-        ],
-        { client: trx }
-      )
+      const roleGroups = await RoleGroup.createMany([{ name: 'Admin' }, { name: 'Front Office' }], {
+        client: trx,
+      })
+
       const adminRoleIds = roles.filter((role) => role.name === 'ADMIN').map((role) => role.id)
       const adminRoleGroup = roleGroups[0]
       await adminRoleGroup.related('roles').attach(adminRoleIds, trx)
@@ -85,12 +45,7 @@ export default class extends BaseSeeder {
       //region users
 
       const adminUser = await User.create(
-        {
-          fullName: 'admin',
-          username: 'admin',
-          password: 'admin',
-          isActive: true,
-        },
+        { fullName: 'admin', username: 'admin', password: 'admin', isActive: true },
         { client: trx }
       )
 

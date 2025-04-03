@@ -62,7 +62,7 @@ export default function MyBookingPage({
                     <p className="text-muted-foreground">Check-in date: </p>
                     <p>{booking.checkInDate.toString()}</p>
                     <p className="text-muted-foreground">Check-out date:</p>
-                    <p> {booking.checkInDate.toString()}</p>
+                    <p> {booking.checkOutDate.toString()}</p>
                     <p className="text-muted-foreground">Room Type: </p>
                     <p> {booking.roomType?.name}</p>
                     <p className="text-muted-foreground">Total Price: </p>

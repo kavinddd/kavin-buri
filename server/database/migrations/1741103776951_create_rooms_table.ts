@@ -9,7 +9,7 @@ export default class extends BaseSchema {
       table.string('code').notNullable().unique()
       table.integer('room_type_id').unsigned().references('id').inTable('room_types')
       table
-        .enu('status', ['AVAILABLE', 'OUT_OF_SERVICE', 'OCCUPIED', 'RESERVED'])
+        .enu('status', ['AVAILABLE', 'OUT_OF_SERVICE', 'OCCUPIED', 'RESERVED', 'CLEANING'])
         .notNullable()
         .defaultTo('AVAILABLE')
       table.smallint('floor_no').notNullable().unsigned()

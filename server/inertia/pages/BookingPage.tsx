@@ -12,11 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader } from '~/lib/components
 import { Input } from '~/lib/components/ui/input'
 import { Separator } from '~/lib/components/ui/separator'
 import { BookingSourceType, RoomTypeNameType } from '../../app/types'
-import { addDays } from 'date-fns'
-import type { InferPageProps } from '@adonisjs/inertia/types'
-import type BookingsController from '#controllers/bookings_controller'
 import { BookingIndexProps } from '#controllers/bookings_controller'
-import { toast } from 'sonner'
 
 export default function BookingPage(props: BookingIndexProps) {
   return (
@@ -43,8 +39,8 @@ type BookingFormType = {
   contactName: string
   email: string
   contactNumber: string
-  checkInDate?: Date
-  checkOutDate?: Date
+  checkInDate: string
+  checkOutDate: string
   numAdult: number
   numChildren: number
   roomPrice: number
@@ -60,8 +56,8 @@ const defaultFormData: BookingFormType = {
   contactNumber: '',
   numAdult: 1,
   numChildren: 0,
-  checkInDate: undefined,
-  checkOutDate: undefined,
+  checkInDate: '',
+  checkOutDate: '',
   roomPrice: 0,
   roomTypeName: 'DELUXE',
   hasAbf: false,
@@ -73,14 +69,11 @@ function BookingForm() {
   const { props } = usePage<BookingIndexProps>()
   const { data, setData, post, processing, errors } = useForm<BookingFormType>(defaultFormData)
 
-  console.log('errors')
-  console.log(errors)
-
   const [dateRange, setDateRange] = useState<DateRange>()
 
   function handleDateRangeChange(dateRange: DateRange | undefined) {
-    if (dateRange?.from) setData('checkInDate', dateRange.from)
-    if (dateRange?.to) setData('checkOutDate', dateRange.to)
+    if (dateRange?.from) setData('checkInDate', dateRange.from.toDateString())
+    if (dateRange?.to) setData('checkOutDate', dateRange.to.toDateString())
     setDateRange(dateRange)
   }
 

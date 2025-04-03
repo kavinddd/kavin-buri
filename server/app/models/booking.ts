@@ -12,14 +12,11 @@ import Guest from './guest.js'
 import Room from './room.js'
 
 export default class Booking extends BaseModel {
-  @column({ isPrimary: true })
-  declare id: BookingId
+  @column({ isPrimary: true }) declare id: BookingId
 
-  @column()
-  declare paymentId: string
+  @column() declare paymentId: string
 
-  @column()
-  declare roomTypeId: RoomTypeId
+  @column() declare roomTypeId: RoomTypeId
 
   @column()
   declare roomId: RoomId
