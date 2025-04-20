@@ -63,7 +63,7 @@ export default class UsersController {
     return this.service.create(req, auth.user!)
   }
 
-  async update({ request, bouncer, response, auth }: HttpContext) {
+  async update({ request, bouncer, response, auth, session }: HttpContext) {
     if (await bouncer.with(UserPolicy).denies('create')) {
       return response.forbidden('No access')
     }
@@ -73,7 +73,6 @@ export default class UsersController {
     } = await request.validateUsing(idNumberValidator)
 
     const req: UpdateUserReq = await request.validateUsing(updateUserValidator)
-
     return this.service.update(id, req, auth.user!, auth)
   }
 

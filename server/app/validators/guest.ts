@@ -44,7 +44,7 @@ export const updateGuestValidator = vine.compile(
   vine.object({
     citizenId: vine.string().optional(),
     firstName: vine.string().optional(),
-    lastNamme: vine.string().optional(),
+    lastName: vine.string().optional(),
     nationality: vine.string().optional(),
     dateOfBirth: vine
       .date({ formats: ['iso8601'] })
@@ -52,4 +52,5 @@ export const updateGuestValidator = vine.compile(
       .optional(),
   })
 )
+
 export type UpdateGuestReq = Infer<typeof updateGuestValidator>

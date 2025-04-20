@@ -4,6 +4,7 @@ import User from '#models/user'
 import { inject } from '@adonisjs/core'
 import { Logger } from '@adonisjs/core/logger'
 import Role from '#models/role'
+import RoleGroupRole from '#models/role_group_role'
 
 interface SessionInfo {
   user: User
@@ -16,9 +17,13 @@ export default class SessionController {
 
   async get({ auth }: HttpContext): Promise<SessionInfo> {
     const user = auth.getUserOrFail()
-    await user.loadOnce('roleGroups')
-    await Promise.all(user.roleGroups.map(async (roleGroup) => await roleGroup.loadOnce('roles')))
-    const roles = user.roleGroups.flatMap((rg) => rg.roles)
+    const roleGroupIds = user.roleGroups.map((it) => it.id)
+
+    const roleGroupRoles = await RoleGroupRole.query().whereIn('roleGroupId', roleGroupIds)
+    const roleIds = roleGroupRoles.map((it) => it.roleId)
+    const roles = await Role.findMany(roleIds)
+
+    await user.load('roleGroups')
 
     return { user: user, roles: roles }
   }
@@ -39,9 +44,12 @@ export default class SessionController {
       return response.unauthorized({ errors: [{ message: 'User is not active.' }] })
     }
 
-    await user.loadOnce('roleGroups')
+    await user.load('roleGroups')
     const roleGroupIds = user.roleGroups.map((it) => it.id)
-    const roles = await Role.findMany(roleGroupIds)
+
+    const roleGroupRoles = await RoleGroupRole.query().whereIn('roleGroupId', roleGroupIds)
+    const roleIds = roleGroupRoles.map((it) => it.roleId)
+    const roles = await Role.findMany(roleIds)
 
     /**
      * Step 3: Login user (use web guard)

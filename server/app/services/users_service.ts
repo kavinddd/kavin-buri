@@ -99,17 +99,19 @@ export class UserService {
       user.merge({ ...userReq, updatedBy: currentUser.id })
 
       if (roleGroupIds !== undefined) {
-        user.related('roleGroups').sync(roleGroupIds, true, trx)
+        await user.related('roleGroups').sync(roleGroupIds, true, trx)
       }
 
       await user.save()
       await trx.commit()
 
       // updating the user will ensure the updated one is will be logged out
-      await auth.use('web').logout()
+      // await auth.use('web').logout()
 
       return user.id
     } catch (e) {
+      console.log('error')
+      console.log(e.message)
       await trx.rollback()
       throw e
     }
