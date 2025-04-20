@@ -7,7 +7,6 @@ import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Edit, Eye, PlusIcon } from "lucide-react";
 import GuestSearchPanel from "./GuestSearchPanel";
-import { Badge } from "@/components/ui/badge";
 
 const defaultSearch: GuestSearch = {};
 

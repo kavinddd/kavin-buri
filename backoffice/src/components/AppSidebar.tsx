@@ -18,13 +18,12 @@ import {
 } from "./ui/sidebar";
 import { cn } from "@/lib/utils";
 import navs from "@/core/navs";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { ChevronsUpDown, LogOutIcon, UserIcon } from "lucide-react";
@@ -36,9 +35,15 @@ export default function AppSidebar() {
   const [searchParams, _] = useSearchParams();
   const { user, logout } = useUser();
 
-  const test: Record<string, string> = {
-    status: "arrival",
-  };
+  const { roles } = user!;
+
+  console.log(roles);
+
+  const accessibleNavs = useMemo(() => {
+    return navs.filter(({ roles: requiredRoles }) =>
+      requiredRoles?.some((role) => roles.includes(role)),
+    );
+  }, [roles]);
 
   return (
     <Sidebar collapsible="icon" variant="floating">
@@ -56,7 +61,7 @@ export default function AppSidebar() {
 
       <SidebarContent className="p-2">
         <SidebarMenu className="flex flex-col gap-2">
-          {navs.map((nav) => (
+          {accessibleNavs.map((nav) => (
             <React.Fragment key={nav.url}>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>

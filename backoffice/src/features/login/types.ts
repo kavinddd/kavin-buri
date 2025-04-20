@@ -1,13 +1,14 @@
-import { Role } from "@/core/typeAliases";
+import { RoleNameType } from "@/core/types";
+import { Role } from "../roles/types";
 
 export interface SessionInfo {
   user: User;
-  roles: string[];
+  roles: Role[];
 }
 
 export interface AuthUser {
   username: string;
-  roles: Role[];
+  roles: RoleNameType[];
 }
 
 type UserId = number;

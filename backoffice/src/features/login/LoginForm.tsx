@@ -18,6 +18,8 @@ import { useNavigate } from "react-router";
 import { useUser } from "../users/UserProvider";
 import { sessionApis } from "./apis";
 import { AuthUser, SessionInfo } from "./types";
+import logo from "@/assets/images/logo.jpg";
+import logoWide from "@/assets/images/logo-wide.png";
 
 const formSchema = z.object({
   username: z.string().min(5, "Username must be at least 6 characters."),
@@ -31,7 +33,7 @@ export function transformSessionInfoToAuthUser(
 ): AuthUser {
   return {
     username: sessionInfo.user.username,
-    roles: sessionInfo.roles,
+    roles: sessionInfo.roles.map((role) => role.name),
   };
 }
 
@@ -80,7 +82,7 @@ export default function LoginForm({
                 <div className="flex flex-col items-center text-center">
                   <div className="relative hidden bg-muted md:block">
                     <img
-                      src="/images/logo-wide.png"
+                      src={logoWide}
                       alt="Image"
                       className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
                     />
@@ -121,8 +123,8 @@ export default function LoginForm({
             </form>
             <div className="relative hidden bg-muted md:block">
               <img
-                src="/images/logo.jpg"
-                alt="Image"
+                src={logo}
+                alt="Logo"
                 className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
               />
             </div>

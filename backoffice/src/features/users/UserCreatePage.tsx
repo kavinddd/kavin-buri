@@ -1,4 +1,4 @@
-import { Navigate, useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import UserForm from "./UserForm";
 import { UserId, UserSaveReq } from "./types";

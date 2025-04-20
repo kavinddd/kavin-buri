@@ -1,6 +1,4 @@
 import { z } from "zod";
-import { BookingSearch as userSearch } from "./types";
-import { bookingSourceEnum, bookingStatusEnum } from "@/core/enums";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -25,11 +23,12 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { cleanForm } from "@/core/utils";
 import { InputEnumBoolean } from "@/components/inputs/InputEnumBoolean";
 import InputDropdownMulti from "@/components/inputs/InputDropdownMulti";
 import { listRoleGroupDropdown } from "../roleGroups/api";
+import { UserSearch } from "./types";
 
 const searchFormSchema = z.object({
   fullName: z.string().optional(),
@@ -48,8 +47,8 @@ const searchFormDefaultValue: SearchFormType = {
 };
 
 interface Props {
-  defaultSearch: userSearch;
-  onSubmit: (search: userSearch) => void;
+  defaultSearch: UserSearch;
+  onSubmit: (search: UserSearch) => void;
 }
 
 export default function UserSearchPanel({ defaultSearch, onSubmit }: Props) {
@@ -69,7 +68,7 @@ export default function UserSearchPanel({ defaultSearch, onSubmit }: Props) {
 
   const onValidSubmit = useCallback(
     (formData: SearchFormType) => {
-      onSubmit(cleanForm(formData) as userSearch);
+      onSubmit(cleanForm(formData) as UserSearch);
     },
     [onSubmit],
   );

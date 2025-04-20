@@ -17,7 +17,7 @@ export type RoomId = number;
 export type RoomSort = Extract<keyof Room, "id" | "code" | "updatedAt">;
 export const bookingSortEnum: RoomSort[] = ["id", "code", "updatedAt"];
 export type RoomSearch = Partial<Room> & {
-  roomTypeName: RoomTypeNameType;
+  roomTypeName?: RoomTypeNameType;
 };
 export type RoomPaginateReq = PaginateReq<RoomSort, RoomSearch>;
 

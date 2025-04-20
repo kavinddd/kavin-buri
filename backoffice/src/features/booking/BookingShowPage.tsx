@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import BookingForm from "./BookingForm";
-import { Navigate, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 export default function BookingShowPage() {
   const { id } = useParams();

@@ -5,7 +5,7 @@ import { useState } from "react";
 import PaginateDataTable from "@/components/datatable/PaginateDataTable";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye, PlusIcon } from "lucide-react";
+import { Edit, Eye } from "lucide-react";
 import RoomSearchPanel from "./RoomSearchPanel";
 
 const defaultSearch: RoomSearch = {};

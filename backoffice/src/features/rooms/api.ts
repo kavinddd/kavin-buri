@@ -3,7 +3,6 @@ import { Paginated, PaginateReq, toQueryParams } from "@/core/paginate";
 import { Room, RoomId, RoomSaveReq, RoomSearch, RoomSort } from "./types";
 import { ListDropdown } from "@/core/dropdown";
 import { cleanForm } from "@/core/utils";
-import { roomTypeNameEnum } from "@/core/enums";
 
 const path = "rooms";
 

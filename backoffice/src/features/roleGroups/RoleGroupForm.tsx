@@ -149,7 +149,6 @@ export default function RoleGroupForm({
                         enums={roleNameEnum}
                         onChange={field.onChange}
                         readOnly={isReadOnly}
-                        defaultValue={defaultValues.roles}
                       />
                     </FormControl>
                     <FormMessage />

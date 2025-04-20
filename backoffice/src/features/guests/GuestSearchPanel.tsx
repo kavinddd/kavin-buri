@@ -1,6 +1,4 @@
 import { z } from "zod";
-import { RoleGroupSearch } from "./types";
-import { roleNameEnum } from "@/core/enums";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -27,8 +25,8 @@ import {
 } from "@/components/ui/card";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { cleanForm } from "@/core/utils";
-import InputEnumMulti from "@/components/inputs/InputEmumMulti";
 import InputDate from "@/components/inputs/InputDate";
+import { RoleGroupSearch } from "../roleGroups/types";
 
 const searchFormSchema = z.object({
   citizenId: z.string().optional(),
