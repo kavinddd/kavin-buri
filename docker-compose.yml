@@ -1,0 +1,45 @@
+version: '3.8'  # Use version 3.8 for more modern Docker Compose syntax
+
+services:
+  # Database (Postgres)
+  db:
+    container_name: db
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: lucid  # Set the DB user
+      POSTGRES_PASSWORD: lucid  # Set the DB password
+      POSTGRES_DB: kavinburi  # Set the DB name
+    volumes:
+      - db_data:/var/lib/postgresql/data  # Persist the DB data
+    networks:
+      - app-network
+
+# Backend service (Node.js, Express, Adonis, etc.)
+  server:
+    container_name: server
+    build: ./server
+    networks:
+      - app-network
+    depends_on:
+      - db  # Ensure the DB service is up before starting the server
+
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: ./backoffice/Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+# Define networks to enable inter-service communication
+networks:
+  app-network:
+    driver: bridge  # Use bridge network driver for communication
+
+# Define volumes for persisting database data
+volumes:
+  db_data:  # This volume is where the Postgres data will be stored
+
+

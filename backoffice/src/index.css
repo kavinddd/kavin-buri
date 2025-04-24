@@ -78,19 +78,19 @@
 
 @font-face {
   font-family: 'Inter';
-  src: url('/fonts/Inter_18pt-Regular.ttf') format('truetype');
+  src: url('fonts/Inter_18pt-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: 'Kanit';
-  src: url('/fonts/Kanit-Light.ttf') format('truetype');
+  src: url('fonts/Kanit-Light.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: 'NotoSansLao';
-  src: url('/fonts/NotoSansLao-Regular.ttf') format('truetype');
+  src: url('fonts/NotoSansLao-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }

@@ -40,6 +40,7 @@ router
   })
   .prefix('myBooking')
   .as('myBooking')
+
 // API
 
 router

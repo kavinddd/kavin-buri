@@ -1,6 +1,5 @@
 import vine from '@vinejs/vine'
 import { Infer } from '@vinejs/vine/types'
-import type { BookingStatusType, RoomTypeNameType } from '../types.js'
 import { bookingSourceEnum, bookingStatusEnum, directionEnum, roomTypeNameEnum } from '../enums.js'
 import { DateTime } from 'luxon'
 import { bookingSortEnum } from '#models/booking'

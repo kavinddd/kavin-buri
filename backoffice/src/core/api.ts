@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:3333/api"; // FIXME:
+// const API_URL = "http://localhost:3333/api"; // FIXME:
+const API_URL = "/api"; // FIXME:
 
 // const defaultOptions: RequestInit = {
 //   headers: {
