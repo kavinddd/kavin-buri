@@ -34,7 +34,7 @@ export class RoomsService {
       const subQuery = RoomType.query().where('name', search.roomTypeName).select('id')
       query.whereIn('room_type_id', subQuery)
     }
-
+    if (search.status) query.where('status', '=', search.status)
     if (search.roomTypeId) query.where('room_type_id', '=', search.roomTypeId)
   }
 
