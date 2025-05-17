@@ -51,7 +51,7 @@ export default class BookingsController {
     response.redirect().toRoute('myBooking.index', { confirmNo: confirmBookingNo })
   }
 
-  async myBooking({ inertia, params, session }: HttpContext) {
+  async myBooking({ inertia, params }: HttpContext) {
     const confirmNo = params.confirmNo
 
     if (!confirmNo) {
@@ -64,8 +64,7 @@ export default class BookingsController {
       .first()
 
     if (!booking) {
-      session.flash('error', 'Booking was not found.')
-      return inertia.render('MyBookingPage', { confirmNo })
+      return inertia.render('MyBookingPage', { confirmNo, error: 'Booking was not found.' })
     }
 
     return inertia.render('MyBookingPage', { confirmNo, booking })
