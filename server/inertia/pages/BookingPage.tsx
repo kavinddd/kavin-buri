@@ -101,7 +101,12 @@ function BookingForm() {
             <div className="flex-1">
               <div className="flex flex-col gap-2">
                 <Input type="text" disabled={true} readOnly={true} value={data.roomTypeName} />
-                <RoomCarousel onSelect={(roomTypeName) => setData('roomTypeName', roomTypeName)} />
+                <RoomCarousel
+                  onSelect={(roomTypeName) => {
+                    setData('roomTypeName', roomTypeName)
+                    setDateRange(undefined)
+                  }}
+                />
 
                 <div className="flex flex-col xl:flex-row gap-2 xl:gap-4 items-center">
                   <RoomPriceCalendarDialog
